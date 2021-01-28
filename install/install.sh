@@ -5,3 +5,4 @@ nvm install node
 sudo yum install atk java-atk-wrapper at-spi2-atk gtk3 libXt -y
 npm i puppeteer
 npm i puppeteer-core
+npm install three

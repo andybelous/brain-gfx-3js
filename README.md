@@ -1,11 +1,14 @@
 # brain-gfx-3js
 
-## install
+## To install
 
-bash install.sh
+Once you login you can run:
 
-## run
+bash brain-gfx-3js/install/install.sh
 
-node example.js
+## To test
+
+source .bashrc
+node brain-gfx-3js/testing/pngTest.js
 
 Should create a example.png
