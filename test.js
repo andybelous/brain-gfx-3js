@@ -1,9 +1,10 @@
 const puppeteer = require("puppeteer");
 const fs = require('fs');
+
 const SAMPLE_DATA = fs.readFileSync('./data.json', {encoding:'utf8', flag:'r'});
-const BRAIN_MODEL = fs.readFileSync('./brain1.glb');  
-const BRAIN_MODEL_BUFFER = toArrayBuffer(BRAIN_MODEL);
-//const BRAIN_MODEL_BUFFER = new Buffer.from( BRAIN_MODEL ).toString();
+const BRAIN_MODEL_RAW_URL = 'https://glb-model.s3.amazonaws.com/brain1.glb';
+
+
 const html = `<html>
 <head>
   <meta charset="utf-8">
@@ -28,14 +29,10 @@ const html = `<html>
 </html>`;
 
 (async () => {
-  // Don't disable the gpu
-//var args = puppeteer.defaultArgs().filter(arg => arg !== '--disable-gpu');
-// Run in non-headless mode
-//args = args.filter(arg => arg !== '--headless');
-// Use desktop graphics
-//args.push("--use-gl=desktop")
+
 var args = puppeteer.defaultArgs();
 args.push('--disable-web-security')
+// args = args.filter(arg => arg !== '--headless');
 // Lanch pupeteer with custom arguments
 const browser = await puppeteer.launch({
     headless: false,
@@ -57,8 +54,9 @@ const browser = await puppeteer.launch({
     .on('requestfailed', request =>
       console.log(`${request.failure().errorText} ${request.url()}`))
 
-  await page.evaluate(({SAMPLE_DATA, BRAIN_MODEL_BUFFER}) => {
+  var result = await page.evaluate(async ({SAMPLE_DATA, BRAIN_MODEL_RAW_URL}) => {
     
+    return await new Promise(resolve => {
     var threeCanvasContainer;
     var brainRegions;
     let camera, scene, renderer, canvas, raycaster, root, sphereContainer, labelSize = 10;
@@ -282,10 +280,9 @@ const browser = await puppeteer.launch({
     
       // Load&Add brain
       const gltfLoader = new THREE.GLTFLoader();
-      //gltfLoader.load("./brain1.glb",
-      gltfLoader.parse(BRAIN_MODEL_BUFFER, './',
+      gltfLoader.load(BRAIN_MODEL_RAW_URL,
+      //gltfLoader.parse(BRAIN_MODEL_BUFFER, './',
         (gltf) => {
-          console.log("LOADED")
           root = gltf.scene;
     
           const box = new THREE.Box3().setFromObject(root);
@@ -331,8 +328,8 @@ const browser = await puppeteer.launch({
           brainModel.rotation.z = Math.PI;
     
           scene.add(brainModel);
-          console.log("Brain model", brainModel)
           renderer.render(scene, camera);
+          resolve(true);
     
         }
       ,(error)=> console.log(error));
@@ -392,21 +389,16 @@ const browser = await puppeteer.launch({
       }
     };
     
-    
+      })
 
-  }, {SAMPLE_DATA, BRAIN_MODEL_BUFFER});
+  }, {SAMPLE_DATA, BRAIN_MODEL_RAW_URL});
 
-  await page.screenshot({ path: "example.png" });
+  console.log("Successfully rendered:", result)
 
-  setTimeout(async ()=>{await browser.close()}, 1000);
+  setTimeout(async ()=>{
+    await page.screenshot({ path: "example.png" });
+    await browser.close()
+  }, 0);
 })();
 
 
-function toArrayBuffer(buf) {
-  var ab = new ArrayBuffer(buf.length);
-  var view = new Uint8Array(ab);
-  for (var i = 0; i < buf.length; ++i) {
-      view[i] = buf[i];
-  }
-  return ab;
-}
