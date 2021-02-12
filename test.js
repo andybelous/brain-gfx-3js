@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const SAMPLE_DATA = fs.readFileSync('./data.json', {encoding:'utf8', flag:'r'});
 const BRAIN_MODEL_RAW_URL = 'https://glb-model.s3.amazonaws.com/brain1.glb';
-
+const BRAIN_STRAIN_ACTIVE = 'principal-max-strain';
 
 const html = `<html>
 <head>
@@ -54,7 +54,7 @@ const browser = await puppeteer.launch({
     .on('requestfailed', request =>
       console.log(`${request.failure().errorText} ${request.url()}`))
 
-  var result = await page.evaluate(async ({SAMPLE_DATA, BRAIN_MODEL_RAW_URL}) => {
+  var result = await page.evaluate(async ({SAMPLE_DATA, BRAIN_MODEL_RAW_URL, BRAIN_STRAIN_ACTIVE}) => {
     
     return await new Promise(resolve => {
     var threeCanvasContainer;
@@ -139,7 +139,7 @@ const browser = await puppeteer.launch({
       color: 0xff0000
     });
     
-    var brainStrainActive = 'principal-max-strain';
+    var brainStrainActive = BRAIN_STRAIN_ACTIVE;
 
 
       
@@ -391,7 +391,7 @@ const browser = await puppeteer.launch({
     
       })
 
-  }, {SAMPLE_DATA, BRAIN_MODEL_RAW_URL});
+  }, {SAMPLE_DATA, BRAIN_MODEL_RAW_URL, BRAIN_STRAIN_ACTIVE});
 
   console.log("Successfully rendered:", result)
 
