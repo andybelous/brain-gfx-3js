@@ -496,7 +496,7 @@ const browser = await puppeteer.launch({
             },
             ticks: {
               display: true, //this will remove only the label
-              fontSize: 12
+              fontSize: 22
             }
           }
         ]
