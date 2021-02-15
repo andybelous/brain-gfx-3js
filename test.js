@@ -20,28 +20,36 @@ const html = `<html>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js" integrity="sha512-XI02ivhfmEfnk8CEEnJ92ZS6hOqWoWMKF6pxF/tC/DXBVxDXgs2Kmlc9CHA0Aw2dX03nrr8vF54Z6Mqlkuabkw==" crossorigin="anonymous"></script>
   <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
 </head>
 <body>
-  <div id="canvas-container" style="width: 100%; height: 80%; display: block;">  
+  <h1 id="strain-metric" style="position: absolute; top:0; left: 50%; transform: translate(-50%);">Location of Maximum Principal Strain</h1>
+  <div id="content" style="margin-top: 70px;"></div>
+  <div id="canvas-container" style="width: 40%; height: 80%; display: inline-block;">  
   </div>
-
+  <div style = "display:inline-block; width: 50%; height: 80%; margin-left: 5%;">
+    <canvas id="chart" style="width: 100%;height: 100%;"></canvas>
+  </div>
+<script src="index.js"></script>
 </body>
 </html>`;
 
 (async () => {
 
 var args = puppeteer.defaultArgs();
-args.push('--disable-web-security')
+args.push('--disable-web-security');
 // args = args.filter(arg => arg !== '--headless');
 // Lanch pupeteer with custom arguments
 const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     ignoreDefaultArgs: true,
-    args
+    args,
 });
 
   //const browser = await puppeteer.launch();
   const page = await browser.newPage();
+  await page.setViewport({ width: 1920, height: 1080})
   await page.setContent(html);
   // page.on('console', (log) => console[log._type](log._text));
 
@@ -359,6 +367,7 @@ const browser = await puppeteer.launch({
       // all_spheres_json = all_spheres_json.concat(csf_json);
     
       showAllSpheres();
+      setUpChart();
     }
     
     function showAllSpheres () {
@@ -388,6 +397,123 @@ const browser = await puppeteer.launch({
         sphereContainer.add(sphere);
       }
     };
+
+    function setUpChart()
+    {
+    var ctx = document.getElementById('chart').getContext('2d');
+    const data = {
+      labels: [ "Frontal", "Parietal", "Occipital", "Temporal", "Cerebellum", "Stem", ["Motor/","Sensor ", "Cortex"]],
+      datasets: [
+        {
+          label: "Events",
+          lineTension: 0.1,
+          backgroundColor: defaultBarColors,
+          borderColor: "#1987DD",
+          hoverBackgroundColor: "rgba(255,255,102)",
+          hoverBorderColor: "rgba(255,255,102)",
+          data: [
+            parseFloat(frontal_lobe_json.length),
+            parseFloat(pariental_lobe_json.length),
+            parseFloat(occipital_lobe_json.length),
+            parseFloat(temporal_lobe_json.length),
+            parseFloat(cerebellum_lobe_json.length),
+            parseFloat(stem_json.length),
+            parseFloat(middle_part_of_the_brain_json.length)
+          ]
+        }
+      ]
+    };
+    const options = {
+      animation: false,
+      responsive: false,
+      plugins: {
+        datalabels: {
+          color: "#007bff",
+          font: function (context) {
+            var width = context.chart.width;
+            labelSize = Math.round(width / 20);
+            return {
+              size: labelSize
+            };
+          },
+          formatter: function (value, context) {
+            switch (context.dataIndex) {
+              case 0:
+                return frontal_lobe_json.length;
+                // eslint-disable-next-line
+                break;
+              case 1:
+                return pariental_lobe_json.length;
+                // eslint-disable-next-line
+                break;
+              case 2:
+                return occipital_lobe_json.length;
+                // eslint-disable-next-line
+                break;
+              case 3:
+                return temporal_lobe_json.length;
+                // eslint-disable-next-line
+                break;
+              case 4:
+                return cerebellum_lobe_json.length;
+                // eslint-disable-next-line
+                break;
+              case 5:
+                return stem_json.length;
+                // eslint-disable-next-line
+                break;
+              case 6:
+                return middle_part_of_the_brain_json.length;
+                // eslint-disable-next-line
+                break;
+              default:
+                break;
+            }
+          }
+        },
+      },
+      scales: {
+        yAxes: [
+          {
+            scaleLabel: {
+              display: true,
+              labelString: "Number of Events",
+              fontSize: 30,
+              fontColor: "#4c4d4d",
+
+            },
+            ticks: {
+              min: 0,
+              fontSize: 12
+            }
+          }
+        ],
+        xAxes: [
+          {
+            scaleLabel: {
+              display: false,
+              labelString: "Angular Acceleration"
+            },
+            ticks: {
+              display: true, //this will remove only the label
+              fontSize: 22
+            }
+          }
+        ]
+      },
+      legend: {
+        display: false
+      },
+      
+    };
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: options,
+    });
+
+    document.getElementById("strain-metric").innerHTML = brainStrainActive;
+    }
     
       })
 
