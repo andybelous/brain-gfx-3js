@@ -1,5 +1,5 @@
 *.png
-
+config/configuration_keys.json
 
 # Logs
 logs
