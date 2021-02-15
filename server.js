@@ -130,11 +130,13 @@ app.post("/getSummary", function (req, res) {
       brainRegions["csdm-max"] = csdm_max;
       brainRegions["masXsr-15-max"] = masXsr_15_max;
 
-      writeImage(brainRegions)
+      writeImage(brainRegions, "principal-max-strain")
         .then((data) => {
+          writeImage(brainRegions, "CSDM-5").then((data) => {
           res.send({
             status: 200,
-            message: 'Image created successfully.',
+            message: 'Images created successfully.',
+          });
           });
         })
         .catch((err) => {
@@ -176,13 +178,13 @@ function getFileFromS3(account_id) {
   });
 }
 
-function writeImage(summaryData) {
+function writeImage(summaryData, BRAIN_STRAIN_ACTIVE) {
   return new Promise((resolve, reject) => {
 
     //const SAMPLE_DATA = fs.readFileSync('./data.json', {encoding:'utf8', flag:'r'});
     const SAMPLE_DATA = summaryData;
     const BRAIN_MODEL_RAW_URL = "https://glb-model.s3.amazonaws.com/brain1.glb";
-    const BRAIN_STRAIN_ACTIVE = "principal-max-strain";
+    //const BRAIN_STRAIN_ACTIVE = "principal-max-strain";
     console.log("In writeImage function");
 
     const html = `<html>
@@ -734,10 +736,10 @@ function writeImage(summaryData) {
 
       console.log("Successfully rendered:", result);
       setTimeout(async () => {
-        await page.screenshot({ path: "example.png" });
+        const screenshot = await page.screenshot({ path: BRAIN_STRAIN_ACTIVE + ".png" });
         await browser.close();
+        resolve(screenshot);
       }, 0);
-      resolve(1);
     })();
 
     // return 1; // Function returns the product of a and b
