@@ -137,6 +137,7 @@ app.post("/getSummary", function (req, res) {
 
       writeImage(brainRegions, "principal-max-strain")
         .then((data) => {
+         added-write-to-S3
           uploadToS3(req.body.account_id, 'principal-max-strain.png')
             .then((data) => {
               writeImage(brainRegions, "CSDM-5").then((data) => {
@@ -164,6 +165,7 @@ app.post("/getSummary", function (req, res) {
 
 
         })
+
         .catch((err) => {
           res.status(500).send({
             status: 500,
