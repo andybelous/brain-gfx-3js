@@ -132,13 +132,13 @@ app.post("/getSummary", function (req, res) {
 
       writeImage(brainRegions, "principal-max-strain")
         .then((data) => {
-          writeImage(brainRegions, "CSDM-5").then((data) => {
+          return writeImage(brainRegions, "CSDM-5")
+        }).then((data) => {
           res.send({
             status: 200,
             message: 'Images created successfully.',
           });
-          });
-        })
+          })
         .catch((err) => {
           res.status(500).send({
             status: 500,
