@@ -11,6 +11,11 @@ const bucketName = config.bucketName;
 const accessKeyId = config.accessKeyId;
 const secretAccessKey = config.secretAccessKey;
 
+const s3 = new AWS.S3({
+  accessKeyId: accessKeyId,
+  secretAccessKey: secretAccessKey,
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -130,12 +135,34 @@ app.post("/getSummary", function (req, res) {
       brainRegions["csdm-max"] = csdm_max;
       brainRegions["masXsr-15-max"] = masXsr_15_max;
 
-      writeImage(brainRegions)
+      writeImage(brainRegions, "principal-max-strain")
         .then((data) => {
-          res.send({
-            status: 200,
-            message: 'Image created successfully.',
-          });
+          uploadToS3(req.body.account_id, 'principal-max-strain.png')
+            .then((data) => {
+              writeImage(brainRegions, "CSDM-5").then((data) => {
+                uploadToS3(req.body.account_id, 'CSDM-5.png')
+                  .then((data) => {
+                    res.send({
+                      status: 200,
+                      message: 'Images uploaded successfully.',
+                    });
+                  })
+                  .catch((err) => {
+                    res.status(500).send({
+                      status: 500,
+                      error: err.message,
+                    });
+                  });
+              });
+            })
+            .catch((err) => {
+              res.status(500).send({
+                status: 500,
+                error: err.message,
+              });
+            });
+
+
         })
         .catch((err) => {
           res.status(500).send({
@@ -152,17 +179,13 @@ app.post("/getSummary", function (req, res) {
     });
 });
 
-app.listen(port, function (err) {
+app.listen(process.env.PORT || port, function (err) {
   console.log(`Server is listening at http://localhost:${port}`);
 });
 
 function getFileFromS3(account_id) {
   return new Promise((resolve, reject) => {
-    const s3 = new AWS.S3({
-      accessKeyId: accessKeyId,
-      secretAccessKey: secretAccessKey,
-    });
-    var params = {
+    const params = {
       Bucket: bucketName,
       Key: `${account_id}/simulation/summary.json`,
     };
@@ -176,13 +199,13 @@ function getFileFromS3(account_id) {
   });
 }
 
-function writeImage(summaryData) {
+function writeImage(summaryData, BRAIN_STRAIN_ACTIVE) {
   return new Promise((resolve, reject) => {
 
     //const SAMPLE_DATA = fs.readFileSync('./data.json', {encoding:'utf8', flag:'r'});
     const SAMPLE_DATA = summaryData;
     const BRAIN_MODEL_RAW_URL = "https://glb-model.s3.amazonaws.com/brain1.glb";
-    const BRAIN_STRAIN_ACTIVE = "principal-max-strain";
+    //const BRAIN_STRAIN_ACTIVE = "principal-max-strain";
     console.log("In writeImage function");
 
     const html = `<html>
@@ -734,12 +757,34 @@ function writeImage(summaryData) {
 
       console.log("Successfully rendered:", result);
       setTimeout(async () => {
-        await page.screenshot({ path: "example.png" });
+        const screenshot = await page.screenshot({ path: BRAIN_STRAIN_ACTIVE + ".png" });
         await browser.close();
+        resolve(screenshot);
       }, 0);
-      resolve(1);
     })();
 
     // return 1; // Function returns the product of a and b
   });
+}
+
+function uploadToS3(account_id, file) {
+  return new Promise((resolve, reject) => {
+    const fileContent = fs.readFileSync(`./${file}`);
+    const path = `${account_id}/BrainImages/${file}`;
+    const uploadParams = {
+      Bucket: bucketName,
+      Key: path,
+      Body: fileContent,
+      // ACL: 'public-read'
+    };
+    s3.upload(uploadParams, (err, data) => {
+      if (err) {
+        reject(err);
+      }
+      else {
+        fs.unlinkSync(`./${file}`);
+        resolve({ path: path });
+      }
+    });
+  })
 }

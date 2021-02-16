@@ -1,5 +1,6 @@
 *.png
 config/configuration_keys.json
+*.zip
 
 # Logs
 logs
