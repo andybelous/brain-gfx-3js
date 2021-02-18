@@ -49,10 +49,10 @@ app.post("/getSummary", function (req, res) {
       let axonal_strain_max = {};
       let csdm_max = {};
       let masXsr_15_max = {};
-      let GSDM_5 = {};
-      let GSDM_10 = {};
-      let GSDM_15 = {};
-      let GSDM_30 = {};
+      let CSDM_5 = {};
+      let CSDM_10 = {};
+      let CSDM_15 = {};
+      let CSDM_30 = {};
       let MPS_95 = {};
       let MPSR_120 = {};
       let MPSxSR_28 = {};
@@ -137,51 +137,51 @@ app.post("/getSummary", function (req, res) {
             }
           }
 
-          if (summary_data["GSDM-5"] && summary_data["GSDM-5"].location) {
+          if (summary_data["CSDM-5"] && summary_data["CSDM-5"].location) {
             let coordinate = {};
-            coordinate.x = summary_data["GSDM-5"].location[0];
-            coordinate.y = summary_data["GSDM-5"].location[1];
-            coordinate.z = summary_data["GSDM-5"].location[2];
-            if (summary_data["GSDM-5"]["brain-region"]) {
-              region = summary_data["GSDM-5"]["brain-region"].toLowerCase();
-              GSDM_5[region] = GSDM_5[region] || [];
-              GSDM_5[region].push(coordinate);
+            coordinate.x = summary_data["CSDM-5"].location[0];
+            coordinate.y = summary_data["CSDM-5"].location[1];
+            coordinate.z = summary_data["CSDM-5"].location[2];
+            if (summary_data["CSDM-5"]["brain-region"]) {
+              region = summary_data["CSDM-5"]["brain-region"].toLowerCase();
+              CSDM_5[region] = CSDM_5[region] || [];
+              CSDM_5[region].push(coordinate);
             }
           }
 
-          if (summary_data["GSDM-10"] && summary_data["GSDM-10"].location) {
+          if (summary_data["CSDM-10"] && summary_data["CSDM-10"].location) {
             let coordinate = {};
-            coordinate.x = summary_data["GSDM-10"].location[0];
-            coordinate.y = summary_data["GSDM-10"].location[1];
-            coordinate.z = summary_data["GSDM-10"].location[2];
-            if (summary_data["GSDM-10"]["brain-region"]) {
-              region = summary_data["GSDM-10"]["brain-region"].toLowerCase();
-              GSDM_10[region] = GSDM_10[region] || [];
-              GSDM_10[region].push(coordinate);
+            coordinate.x = summary_data["CSDM-10"].location[0];
+            coordinate.y = summary_data["CSDM-10"].location[1];
+            coordinate.z = summary_data["CSDM-10"].location[2];
+            if (summary_data["CSDM-10"]["brain-region"]) {
+              region = summary_data["CSDM-10"]["brain-region"].toLowerCase();
+              CSDM_10[region] = CSDM_10[region] || [];
+              CSDM_10[region].push(coordinate);
             }
           }
 
-          if (summary_data["GSDM-15"] && summary_data["GSDM-15"].location) {
+          if (summary_data["CSDM-15"] && summary_data["CSDM-15"].location) {
             let coordinate = {};
-            coordinate.x = summary_data["GSDM-15"].location[0];
-            coordinate.y = summary_data["GSDM-15"].location[1];
-            coordinate.z = summary_data["GSDM-15"].location[2];
-            if (summary_data["GSDM-15"]["brain-region"]) {
-              region = summary_data["GSDM-15"]["brain-region"].toLowerCase();
-              GSDM_15[region] = GSDM_15[region] || [];
-              GSDM_15[region].push(coordinate);
+            coordinate.x = summary_data["CSDM-15"].location[0];
+            coordinate.y = summary_data["CSDM-15"].location[1];
+            coordinate.z = summary_data["CSDM-15"].location[2];
+            if (summary_data["CSDM-15"]["brain-region"]) {
+              region = summary_data["CSDM-15"]["brain-region"].toLowerCase();
+              CSDM_15[region] = CSDM_15[region] || [];
+              CSDM_15[region].push(coordinate);
             }
           }
 
-          if (summary_data["GSDM-30"] && summary_data["GSDM-30"].location) {
+          if (summary_data["CSDM-30"] && summary_data["CSDM-30"].location) {
             let coordinate = {};
-            coordinate.x = summary_data["GSDM-30"].location[0];
-            coordinate.y = summary_data["GSDM-30"].location[1];
-            coordinate.z = summary_data["GSDM-30"].location[2];
-            if (summary_data["GSDM-30"]["brain-region"]) {
-              region = summary_data["GSDM-30"]["brain-region"].toLowerCase();
-              GSDM_30[region] = GSDM_30[region] || [];
-              GSDM_30[region].push(coordinate);
+            coordinate.x = summary_data["CSDM-30"].location[0];
+            coordinate.y = summary_data["CSDM-30"].location[1];
+            coordinate.z = summary_data["CSDM-30"].location[2];
+            if (summary_data["CSDM-30"]["brain-region"]) {
+              region = summary_data["CSDM-30"]["brain-region"].toLowerCase();
+              CSDM_30[region] = CSDM_30[region] || [];
+              CSDM_30[region].push(coordinate);
             }
           }
 
@@ -259,10 +259,10 @@ app.post("/getSummary", function (req, res) {
       brainRegions["csdm-max"] = csdm_max;
       brainRegions["masXsr-15-max"] = masXsr_15_max;
 
-      brainRegions["CSDM-5"] = GSDM_5;
-      brainRegions["CSDM-10"] = GSDM_10;
-      brainRegions["CSDM-15"] = GSDM_15;
-      brainRegions["CSDM-30"] = GSDM_30;
+      brainRegions["CSDM-5"] = CSDM_5;
+      brainRegions["CSDM-10"] = CSDM_10;
+      brainRegions["CSDM-15"] = CSDM_15;
+      brainRegions["CSDM-30"] = CSDM_30;
       brainRegions["MPS-95"] = MPS_95;
       brainRegions["MPSR-120"] = MPSR_120;
       brainRegions["MPSxSR-28"] = MPSxSR_28;
@@ -274,28 +274,28 @@ app.post("/getSummary", function (req, res) {
           return uploadToS3(req.body.account_id, "principal-max-strain.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "GSDM-5");
+          return writeImage(brainRegions, "CSDM-5");
         })
         .then((data) => {
-          return uploadToS3(req.body.account_id, "GSDM-5.png");
+          return uploadToS3(req.body.account_id, "CSDM-5.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "GSDM-10");
+          return writeImage(brainRegions, "CSDM-10");
         })
         .then((data) => {
-          return uploadToS3(req.body.account_id, "GSDM-10.png");
+          return uploadToS3(req.body.account_id, "CSDM-10.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "GSDM-15");
+          return writeImage(brainRegions, "CSDM-15");
         })
         .then((data) => {
-          return uploadToS3(req.body.account_id, "GSDM-15.png");
+          return uploadToS3(req.body.account_id, "CSDM-15.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "GSDM-30");
+          return writeImage(brainRegions, "CSDM-30");
         })
         .then((data) => {
-          return uploadToS3(req.body.account_id, "GSDM-30.png");
+          return uploadToS3(req.body.account_id, "CSDM-30.png");
         })
         .then((data) => {
           return writeImage(brainRegions, "MPS-95");
