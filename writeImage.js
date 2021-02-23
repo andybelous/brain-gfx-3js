@@ -415,7 +415,7 @@ module.exports = function writeImage(summaryData, account_id, BRAIN_STRAIN_ACTIV
                   // Add pointer(s) to brain model as children
                   // const sphereGeo = new THREE.SphereGeometry(0.003, 32, 32);
                   // const sphereMat = new THREE.MeshStandardMaterial({
-                  // 	color: 0xff0000
+                  //  color: 0xff0000
                   // });
                   const sphere = new THREE.Mesh(sphereGeo, sphereMat);
                   const pointerPos = new THREE.Vector3(x, y, z);
