@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-module.exports = function writeImage(summaryData, BRAIN_STRAIN_ACTIVE) {
+module.exports = function writeImage(summaryData, account_id, BRAIN_STRAIN_ACTIVE) {
     return new Promise((resolve, reject) => {
       //const SAMPLE_DATA = fs.readFileSync('./data.json', {encoding:'utf8', flag:'r'});
       const SAMPLE_DATA = summaryData;
@@ -558,7 +558,7 @@ module.exports = function writeImage(summaryData, BRAIN_STRAIN_ACTIVE) {
   
         console.log("Successfully rendered:", result);
         const screenshot = await page.screenshot({
-          path: BRAIN_STRAIN_ACTIVE + ".png",
+          path: account_id + '_' + BRAIN_STRAIN_ACTIVE + ".png",
         });
         await browser.close();
         resolve(screenshot);

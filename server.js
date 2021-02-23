@@ -268,78 +268,78 @@ app.post("/getSummary", function (req, res) {
       brainRegions["MPSxSR-95"] = MPSxSR_95;
       brainRegions["maximum-PSxSR"] = maximum_PSxSR;
 
-      writeImage(brainRegions, "principal-max-strain")
+      writeImage(brainRegions, req.body.account_id, "principal-max-strain")
         .then((data) => {
           return uploadToS3(req.body.account_id, "principal-max-strain.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "CSDM-5");
+          return writeImage(brainRegions, req.body.account_id, "CSDM-5");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "CSDM-5.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "CSDM-10");
+          return writeImage(brainRegions, req.body.account_id, "CSDM-10");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "CSDM-10.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "CSDM-15");
+          return writeImage(brainRegions, req.body.account_id, "CSDM-15");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "CSDM-15.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "CSDM-30");
+          return writeImage(brainRegions, req.body.account_id, "CSDM-30");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "CSDM-30.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "MPS-95");
+          return writeImage(brainRegions, req.body.account_id, "MPS-95");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "MPS-95.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "MPSR-120");
+          return writeImage(brainRegions, req.body.account_id, "MPSR-120");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "MPSR-120.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "MPSxSR-28");
+          return writeImage(brainRegions, req.body.account_id, "MPSxSR-28");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "MPSxSR-28.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "MPSxSR-95");
+          return writeImage(brainRegions, req.body.account_id, "MPSxSR-95");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "MPSxSR-95.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "axonal-strain-max");
+          return writeImage(brainRegions, req.body.account_id, "axonal-strain-max");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "axonal-strain-max.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "masXsr-15-max");
+          return writeImage(brainRegions, req.body.account_id, "masXsr-15-max");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "masXsr-15-max.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "maximum-PSxSR");
+          return writeImage(brainRegions, req.body.account_id, "maximum-PSxSR");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "maximum-PSxSR.png");
         })
         .then((data) => {
-          return writeImage(brainRegions, "principal-min-strain");
+          return writeImage(brainRegions, req.body.account_id, "principal-min-strain");
         })
         .then((data) => {
           return uploadToS3(req.body.account_id, "principal-min-strain.png");
@@ -507,7 +507,7 @@ function getFileFromS3(account_id) {
 
 function uploadToS3(account_id, file) {
   return new Promise((resolve, reject) => {
-    const fileContent = fs.readFileSync(`./${file}`);
+    const fileContent = fs.readFileSync(`./${account_id}_${file}`);
     const path = `${account_id}/BrainImages/${file}`;
     const uploadParams = {
       Bucket: bucketName,
@@ -519,7 +519,7 @@ function uploadToS3(account_id, file) {
       if (err) {
         reject(err);
       } else {
-        fs.unlinkSync(`./${file}`);
+        fs.unlinkSync(`./${account_id}_${file}`);
         resolve({ path: path });
       }
     });
