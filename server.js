@@ -29,7 +29,7 @@ app.post("/getSummary", function (req, res) {
       error: "AccountId is required",
     });
   }
-  var summaryFilePath =  `${req.body.account_id}/simulation/summary.json`;
+  const summaryFilePath = `${req.body.account_id}/simulation/summary.json`;
   getFileFromS3(summaryFilePath)
     .then((summaryData) => {
       if (!summaryData) {
@@ -38,11 +38,6 @@ app.post("/getSummary", function (req, res) {
         });
       }
       summaryData = JSON.parse(summaryData.Body.toString("utf-8"));
-      console.log("Summary data", summaryData);
-      // res.send({
-      //   status: 200,
-      //   summaryData: summaryData,
-      // });
 
       let brainRegions = {};
       let principal_max_strain = {};
@@ -366,114 +361,118 @@ app.post("/getSummary", function (req, res) {
     });
 });
 
-
- app.post("/GetSingleEvent", async function (req, res) {
+app.post("/GetSingleEvent", async function (req, res) {
   if (!req.body.account_id) {
     return res.status(500).send({
       status: 500,
       error: "AccountId is required",
     });
-  }else if(!req.body.event_id){
+  } else if (!req.body.event_id) {
     return res.status(500).send({
       status: 500,
       error: "EventID is required",
     });
   }
   const { account_id, event_id } = req.body;
-  
-  var outputFilePath =  `${account_id}/simulation/${event_id}/${event_id}_output.json`;
-  getFileFromS3(outputFilePath)
-  .then((outputData) => {
-    if (!outputData) {
-      return res.status(500).send({
-        error: "File does not exists.",
-      });
-    }
-    brainRegions = JSON.parse(outputData.Body.toString("utf-8"));
-    console.log('brainRegions ------------------------\n',brainRegions)
 
- 
-    writeImage(brainRegions, event_id, "principal-max-strain")
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id, event_id ,`principal-max-strain.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, `CSDM-5`);
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id,  event_id ,`CSDM-5.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "CSDM-10");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id,  event_id ,`CSDM-10.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "CSDM-15");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id,  event_id ,`CSDM-15.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "CSDM-30");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id,  event_id ,`CSDM-30.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "MPS-95");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id,  event_id ,`MPS-95.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "MPSR-120");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id,  event_id ,`MPSR-120.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "MPSxSR-28");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id,  event_id ,`MPSxSR-28.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "MPSxSR-95");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id,  event_id ,`MPSxSR-95.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "axonal-strain-max");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id,  event_id ,`axonal-strain-max.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "masXsr-15-max");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id, event_id , `masXsr-15-max.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "maximum-PSxSR");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id, event_id , `maximum-PSxSR.png`);
-    })
-    .then((data) => {
-      return writeImage(brainRegions, event_id, "principal-min-strain");
-    })
-    .then((data) => {
-      return uploadToS3SingleImage(req.body.account_id, event_id , `principal-min-strain.png`);
-    })
-    .then((data) => {
-      res.send({
-        status: 200,
-        message: "Images uploaded successfully.",
-      });
+  const outputFilePath = `${account_id}/simulation/${event_id}/${event_id}_output.json`;
+  getFileFromS3(outputFilePath)
+    .then((outputData) => {
+      if (!outputData) {
+        return res.status(500).send({
+          error: "File does not exists.",
+        });
+      }
+      brainRegions = JSON.parse(outputData.Body.toString("utf-8"));
+      writeImage(brainRegions, event_id, "principal-max-strain")
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `principal-max-strain.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, `CSDM-5`);
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `CSDM-5.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "CSDM-10");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `CSDM-10.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "CSDM-15");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `CSDM-15.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "CSDM-30");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `CSDM-30.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "MPS-95");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `MPS-95.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "MPSR-120");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `MPSR-120.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "MPSxSR-28");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `MPSxSR-28.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "MPSxSR-95");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `MPSxSR-95.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "axonal-strain-max");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `axonal-strain-max.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "masXsr-15-max");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `masXsr-15-max.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "maximum-PSxSR");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `maximum-PSxSR.png`);
+        })
+        .then((data) => {
+          return writeImage(brainRegions, event_id, "principal-min-strain");
+        })
+        .then((data) => {
+          return uploadToS3SingleImage(req.body.account_id, event_id, `principal-min-strain.png`);
+        })
+        .then((data) => {
+          res.send({
+            status: 200,
+            message: "Images uploaded successfully.",
+          });
+        })
+        .catch((err) => {
+          res.status(500).send({
+            status: 500,
+            error: err.message,
+          });
+        });
+
     })
     .catch((err) => {
       res.status(500).send({
@@ -481,16 +480,7 @@ app.post("/getSummary", function (req, res) {
         error: err.message,
       });
     });
-
-  })
-  .catch((err) => {
-    res.status(500).send({
-      status: 500,
-      error: err.message,
-    });
-  });
 });
-
 
 app.listen(process.env.PORT || port, function (err) {
   console.log(`Server is listening at http://localhost:${port}`);
@@ -512,29 +502,6 @@ function getFileFromS3(file_path) {
   });
 }
 
-function uploadToS3SingleImage(account_id, event_id ,file) {
-  return new Promise((resolve, reject) => {
-    const fileContent = fs.readFileSync(`./${event_id}_${file}`);
-    const path = `${account_id}/BrainImages/${event_id}/
-    ${file}`;
-    const uploadParams = {
-      Bucket: bucketName,
-      Key: path,
-      Body: fileContent,
-      // ACL: 'public-read'
-    };
-    s3.upload(uploadParams, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        fs.unlinkSync(`./${event_id}_${file}`);
-        resolve({ path: path });
-      }
-    });
-  });
-}
-
-
 function uploadToS3(account_id, file) {
   return new Promise((resolve, reject) => {
     const fileContent = fs.readFileSync(`./${account_id}_${file}`);
@@ -550,6 +517,28 @@ function uploadToS3(account_id, file) {
         reject(err);
       } else {
         fs.unlinkSync(`./${account_id}_${file}`);
+        resolve({ path: path });
+      }
+    });
+  });
+}
+
+function uploadToS3SingleImage(account_id, event_id, file) {
+  return new Promise((resolve, reject) => {
+    const fileContent = fs.readFileSync(`./${event_id}_${file}`);
+    const path = `${account_id}/BrainImages/${event_id}/
+    ${file}`;
+    const uploadParams = {
+      Bucket: bucketName,
+      Key: path,
+      Body: fileContent,
+      // ACL: 'public-read'
+    };
+    s3.upload(uploadParams, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        fs.unlinkSync(`./${event_id}_${file}`);
         resolve({ path: path });
       }
     });
