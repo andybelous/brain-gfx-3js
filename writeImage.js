@@ -503,7 +503,7 @@ module.exports = function writeImage(summaryData, account_id, BRAIN_STRAIN_ACTIV
                   const LARGE_COLOR = new THREE.Color(0xff0000);
                   const X_LARGE_COLOR = new THREE.Color(0x000000);
               
-                  const SMALL_GEOMETRY = new THREE.SphereGeometry(0.001, 32, 32);
+                  const SMALL_GEOMETRY = new THREE.SphereGeometry(0.0015, 32, 32);
                   const MEDIUM_GEOMETRY = new THREE.SphereGeometry(0.002, 32, 32);
                   const LARGE_GEOMETRY = new THREE.SphereGeometry(0.003, 32, 32);
                   const X_LARGE_GEOMETRY = new THREE.SphereGeometry(0.004, 32, 32);
