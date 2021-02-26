@@ -565,7 +565,7 @@ function getFileFromS3(file_path) {
 function uploadToS3(account_id, file) {
   return new Promise((resolve, reject) => {
     const fileContent = fs.readFileSync(`./${account_id}_${file}`);
-    const path = `${account_id}/BrainImages/${file}`;
+    const path = `${account_id}/simulation/SummaryBrainImages/${file}`;
     const uploadParams = {
       Bucket: bucketName,
       Key: path,
