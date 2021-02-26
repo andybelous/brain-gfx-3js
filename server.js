@@ -576,7 +576,7 @@ function uploadToS3(account_id, file) {
       if (err) {
         reject(err);
       } else {
-        //fs.unlinkSync(`./${account_id}_${file}`);
+        fs.unlinkSync(`./${account_id}_${file}`);
         resolve({ path: path });
       }
     });
