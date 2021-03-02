@@ -545,8 +545,7 @@ function uploadToS3(account_id, file) {
 function uploadToS3SingleImage(account_id, event_id, file) {
   return new Promise((resolve, reject) => {
     const fileContent = fs.readFileSync(`./${event_id}_${file}`);
-    const path = `${account_id}/simulation/${event_id}/BrainImages/
-    ${file}`;
+    const path = `${account_id}/simulation/${event_id}/BrainImages/${file}`;
     const uploadParams = {
       Bucket: bucketName,
       Key: path,
