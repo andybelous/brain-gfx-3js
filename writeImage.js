@@ -3,8 +3,9 @@ module.exports = function writeImage(
   summaryData,
   account_id,
   BRAIN_STRAIN_ACTIVE,
-  ENABLE_COLOR, 
-  DISPLAY_CHART = true
+  ENABLE_COLOR,
+  DISPLAY_CHART = true,
+  ENABLE_LABELS = false
 ) {
   return new Promise((resolve, reject) => {
     //const SAMPLE_DATA = fs.readFileSync('./data.json', {encoding:'utf8', flag:'r'});
@@ -14,109 +15,110 @@ module.exports = function writeImage(
     console.log("In writeImage function");
 
     const html = `<html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { margin: 0; }
-          #c
-          {
-              width: 100%;
-              height: 100%;
-              display: block;
-          }
-          .dot-container
-          {
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { margin: 0; }
+        #c
+        {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .dot-container
+        {
+          display: inline-block;
+          width: 100px;
+          height: 80px;
+          margin-right: 50px;
+          font-size: 17px;
+        }
+        .dot {
+            height: 25px;
+            width: 25px;
+            
+            border-radius: 50%;
             display: inline-block;
-            width: 100px;
-            height: 80px;
-            margin-right: 50px;
-            font-size: 17px;
-          }
-          .dot {
-              height: 25px;
-              width: 25px;
-              
-              border-radius: 50%;
-              display: inline-block;
-           }
-           .green
-           {
-              height: 5px;
-              width: 5px;
-              background-color: #00b050;
-           }
-           .orange
-           {
-            height: 10px;
-            width: 10px;
-            background-color: #ed7d31;
-           }
-           .red
-           {
-            height: 15px;
-            width: 15px;
-            background-color: #ff0000;
-           }
-           .black
-           {
-            height: 20px;
-            width: 20px;
-            background-color: #000000;
-           }
-           .grey-text
-           {
-             color: grey;
-             width: fit-content;
-             font-size: 12px;
-             position: relative;
-             left: 50%;
-             transform: translate(-50%);
-           }
-            </style>
-        
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js" integrity="sha512-XI02ivhfmEfnk8CEEnJ92ZS6hOqWoWMKF6pxF/tC/DXBVxDXgs2Kmlc9CHA0Aw2dX03nrr8vF54Z6Mqlkuabkw==" crossorigin="anonymous"></script>
-        <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
-      </head>
-      <body>
-        <h1 id="strain-metric" style="position: absolute; top:0; left: 50%; transform: translate(-50%);">Location of Maximum Principal Strain</h1>
-        <div id="content" style="margin-top: 70px;"></div>
-        <div id="three-content" style="width: 40%; height: 80%; display: inline-block;">
-        <div id="canvas-container" style="width: 100%; height: 100%;">
-        </div> 
-          <div id="strain-metric-magnitudes" style="bottom: 10;left: 50%;transform: translate(-50%);width: fit-content;display: block;z-index: 20;position: relative;text-align: center;">
-            <div class="dot-container">
-              <span class="green dot"></span>
-              <strong>Small</strong>
-              <div class="grey-text">0-2%</div></div>
-          
-            <div class="dot-container">
-              <span class="orange dot"></span>
-              <strong>Medium</strong>
-              <div class="grey-text">2-5%</div></div>
-        
-            <div class="dot-container">
-              <span class="red dot"></span>
-              <strong>Large</strong>
-              <div class="grey-text">5-10%</div></div>
-        
-            <div class="dot-container">
-              <span class="black dot"></span>
-              <strong>X-Large</strong>
-              <div class="grey-text">>10%</div></div>
-          
-              <div style="bottom: 10px;position: relative;left: 50%;transform: translate(-50%);font-size: 20px;font-weight: bold;">Strain Metric Magnitudes</div>
-          </div> 
-        
-        </div>
-        <div id="chart-container" style = "display:inline-block; width: 50%; height: 80%; margin-left: 5%;">
-          <canvas id="chart" style="width: 100%;height: 100%;"></canvas>
-        </div>
+         }
+         .green
+         {
+            height: 5px;
+            width: 5px;
+            background-color: #00b050;
+         }
+         .orange
+         {
+          height: 10px;
+          width: 10px;
+          background-color: #ed7d31;
+         }
+         .red
+         {
+          height: 15px;
+          width: 15px;
+          background-color: #ff0000;
+         }
+         .black
+         {
+          height: 20px;
+          width: 20px;
+          background-color: #000000;
+         }
+         .grey-text
+         {
+           color: grey;
+           width: fit-content;
+           font-size: 12px;
+           position: relative;
+           left: 50%;
+           transform: translate(-50%);
+         }
+          </style>
       
-      <script src="index.js"></script>
-      </body>
-      </html>`;
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js" integrity="sha512-XI02ivhfmEfnk8CEEnJ92ZS6hOqWoWMKF6pxF/tC/DXBVxDXgs2Kmlc9CHA0Aw2dX03nrr8vF54Z6Mqlkuabkw==" crossorigin="anonymous"></script>
+      <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+      <script src="https://unpkg.com/three-spritetext"></script>
+    </head>
+    <body>
+      <h1 id="strain-metric" style="position: absolute; top:0; left: 50%; transform: translate(-50%);">Location of Maximum Principal Strain</h1>
+      <div id="content" style="margin-top: 70px;"></div>
+      <div id="three-content" style="width: 40%; height: 80%; display: inline-block;">
+      <div id="canvas-container" style="width: 100%; height: 100%;">
+      </div> 
+        <div id="strain-metric-magnitudes" style="bottom: 10;left: 50%;transform: translate(-50%);width: fit-content;display: block;z-index: 20;position: relative;text-align: center;">
+          <div class="dot-container">
+            <span class="green dot"></span>
+            <strong>Small</strong>
+            <div class="grey-text">0-2%</div></div>
+        
+          <div class="dot-container">
+            <span class="orange dot"></span>
+            <strong>Medium</strong>
+            <div class="grey-text">2-5%</div></div>
+      
+          <div class="dot-container">
+            <span class="red dot"></span>
+            <strong>Large</strong>
+            <div class="grey-text">5-10%</div></div>
+      
+          <div class="dot-container">
+            <span class="black dot"></span>
+            <strong>X-Large</strong>
+            <div class="grey-text">>10%</div></div>
+        
+            <div style="bottom: 10px;position: relative;left: 50%;transform: translate(-50%);font-size: 20px;font-weight: bold;">Strain Metric Magnitudes</div>
+        </div> 
+      
+      </div>
+      <div id="chart-container" style = "display:inline-block; width: 50%; height: 80%; margin-left: 5%;">
+        <canvas id="chart" style="width: 100%;height: 100%;"></canvas>
+      </div>
+    
+    <script src="index.js"></script>
+    </body>
+    </html>`;
 
     (async () => {
       var args = puppeteer.defaultArgs();
@@ -155,9 +157,12 @@ module.exports = function writeImage(
           BRAIN_MODEL_RAW_URL,
           BRAIN_STRAIN_ACTIVE,
           ENABLE_COLOR,
-          DISPLAY_CHART
+          DISPLAY_CHART,
+          ENABLE_LABELS,
         }) => {
           return await new Promise((resolve) => {
+            var spheres_array = [];
+            const DISPLAY_LABELS = ENABLE_LABELS;
             const ENABLE_COLOR_SPHERES = ENABLE_COLOR;
             const ENABLE_CHART = DISPLAY_CHART;
             if (!ENABLE_CHART) {
@@ -445,6 +450,12 @@ module.exports = function writeImage(
                   brainModel.rotation.z = Math.PI;
 
                   scene.add(brainModel);
+                  if (
+                    DISPLAY_LABELS &&
+                    brainStrainActive == "principal-max-strain"
+                  ) {
+                    makeLabel();
+                  }
                   renderer.render(scene, camera);
                   resolve(true);
                 },
@@ -503,12 +514,13 @@ module.exports = function writeImage(
                   object.y,
                   object.z,
                   object.value,
-                  "pointer" + i
+                  "pointer" + i,
+                  object.region
                 );
               });
             }
 
-            function generateSphere(x, y, z, value, sphereName) {
+            function generateSphere(x, y, z, value, sphereName, region) {
               // console.log('creating shaprers')
               if (root) {
                 // Add pointer(s) to brain model as children
@@ -562,7 +574,10 @@ module.exports = function writeImage(
                 sphere.position.y += pointerPos.z;
                 sphere.position.z -= pointerPos.y;
                 sphere.name = sphereName;
+                sphere.value = value;
+                sphere.region = region;
                 sphereContainer.add(sphere);
+                spheres_array.push(sphere);
               }
             }
 
@@ -694,9 +709,63 @@ module.exports = function writeImage(
                 ).style.display = "none";
               }
             }
+
+            function makeLabel() {
+              var sphere = spheres_array[0];
+              //sphere.material.color.setHex("0xFF0000");
+
+              var myText = new SpriteText(
+                `MPS = ${Math.round(sphere.value * 100)}%\nRegion = ${
+                  sphere.region
+                }`,
+                32
+              );
+              myText.color = "rgba(0,0,0,1)";
+              myText.borderWidth = 0.5;
+              myText.borderColor = "black";
+              myText.backgroundColor = "rgba(255,255,255,1)";
+              myText.padding = 3;
+              myText.scale.set(0.05, 0.03, 0.1);
+
+              var sphere_position = new THREE.Vector3();
+              sphere.getWorldPosition(sphere_position);
+
+              myText.position.set(0.1, 0.1, -0.06);
+              console.log("myText.position", myText.position);
+              myText.layers.set(1);
+              myText.traverse(function (child) {
+                child.layers.set(1);
+              });
+              scene.add(myText);
+
+              var label_camera = camera.cameras[3];
+              label_camera.layers.enable(1);
+              camera.layers.enable(1);
+
+              const points = [];
+              points.push(sphere_position);
+              points.push(myText.position);
+              const lineGeometry = new THREE.BufferGeometry().setFromPoints(
+                points
+              );
+              const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0x000000,
+              });
+              const line = new THREE.Line(lineGeometry, lineMaterial);
+              line.layers.set(1);
+              scene.add(line);
+            }
+            
           });
         },
-        { SAMPLE_DATA, BRAIN_MODEL_RAW_URL, BRAIN_STRAIN_ACTIVE, ENABLE_COLOR, DISPLAY_CHART }
+        {
+          SAMPLE_DATA,
+          BRAIN_MODEL_RAW_URL,
+          BRAIN_STRAIN_ACTIVE,
+          ENABLE_COLOR,
+          DISPLAY_CHART,
+          ENABLE_LABELS,
+        }
       );
 
       console.log("Successfully rendered:", result);
