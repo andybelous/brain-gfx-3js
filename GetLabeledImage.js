@@ -89,146 +89,146 @@ module.exports = async function getLabeledImage(req, res) {
               `principal-max-strain.png`
             );
           })
-          .then((data) => {
-            return writeImage(brainRegions, event_id, `CSDM-5`, ENABLE_COLOR, DISPLAY_CHART);
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `CSDM-5.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(brainRegions, event_id, "CSDM-10", ENABLE_COLOR, DISPLAY_CHART);
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `CSDM-10.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(brainRegions, event_id, "CSDM-15", ENABLE_COLOR, DISPLAY_CHART);
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `CSDM-15.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(brainRegions, event_id, "CSDM-30", ENABLE_COLOR, DISPLAY_CHART);
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `CSDM-30.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(brainRegions, event_id, "MPS-95", ENABLE_COLOR, DISPLAY_CHART);
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `MPS-95.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(brainRegions, event_id, "MPSR-120", ENABLE_COLOR, DISPLAY_CHART);
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `MPSR-120.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(brainRegions, event_id, "MPSxSR-28", ENABLE_COLOR, DISPLAY_CHART);
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `MPSxSR-28.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(brainRegions, event_id, "MPSxSR-95", ENABLE_COLOR, DISPLAY_CHART);
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `MPSxSR-95.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(
-              brainRegions,
-              event_id,
-              "axonal-strain-max",
-              ENABLE_COLOR
-            );
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `axonal-strain-max.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(
-              brainRegions,
-              event_id,
-              "masXsr-15-max",
-              ENABLE_COLOR
-            );
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `masXsr-15-max.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(
-              brainRegions,
-              event_id,
-              "maximum-PSxSR",
-              ENABLE_COLOR
-            );
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `maximum-PSxSR.png`
-            );
-          })
-          .then((data) => {
-            return writeImage(
-              brainRegions,
-              event_id,
-              "principal-min-strain",
-              ENABLE_COLOR
-            );
-          })
-          .then((data) => {
-            return uploadToS3SingleLabeledImage(
-              req.body.account_id,
-              event_id,
-              `principal-min-strain.png`
-            );
-          })
+          // .then((data) => {
+          //   return writeImage(brainRegions, event_id, `CSDM-5`, ENABLE_COLOR, DISPLAY_CHART);
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `CSDM-5.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(brainRegions, event_id, "CSDM-10", ENABLE_COLOR, DISPLAY_CHART);
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `CSDM-10.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(brainRegions, event_id, "CSDM-15", ENABLE_COLOR, DISPLAY_CHART);
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `CSDM-15.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(brainRegions, event_id, "CSDM-30", ENABLE_COLOR, DISPLAY_CHART);
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `CSDM-30.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(brainRegions, event_id, "MPS-95", ENABLE_COLOR, DISPLAY_CHART);
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `MPS-95.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(brainRegions, event_id, "MPSR-120", ENABLE_COLOR, DISPLAY_CHART);
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `MPSR-120.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(brainRegions, event_id, "MPSxSR-28", ENABLE_COLOR, DISPLAY_CHART);
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `MPSxSR-28.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(brainRegions, event_id, "MPSxSR-95", ENABLE_COLOR, DISPLAY_CHART);
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `MPSxSR-95.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(
+          //     brainRegions,
+          //     event_id,
+          //     "axonal-strain-max",
+          //     ENABLE_COLOR
+          //   );
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `axonal-strain-max.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(
+          //     brainRegions,
+          //     event_id,
+          //     "masXsr-15-max",
+          //     ENABLE_COLOR
+          //   );
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `masXsr-15-max.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(
+          //     brainRegions,
+          //     event_id,
+          //     "maximum-PSxSR",
+          //     ENABLE_COLOR
+          //   );
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `maximum-PSxSR.png`
+          //   );
+          // })
+          // .then((data) => {
+          //   return writeImage(
+          //     brainRegions,
+          //     event_id,
+          //     "principal-min-strain",
+          //     ENABLE_COLOR
+          //   );
+          // })
+          // .then((data) => {
+          //   return uploadToS3SingleLabeledImage(
+          //     req.body.account_id,
+          //     event_id,
+          //     `principal-min-strain.png`
+          //   );
+          // })
           .then((data) => {
             res.send({
               status: 200,

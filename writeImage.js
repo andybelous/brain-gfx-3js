@@ -28,10 +28,10 @@ module.exports = function writeImage(
         .dot-container
         {
           display: inline-block;
-          width: 100px;
+          width: 120px;
           height: 80px;
           margin-right: 50px;
-          font-size: 17px;
+          font-size: 24px;
         }
         .dot {
             height: 25px;
@@ -68,7 +68,7 @@ module.exports = function writeImage(
          {
            color: grey;
            width: fit-content;
-           font-size: 12px;
+           font-size: 20px;
            position: relative;
            left: 50%;
            transform: translate(-50%);
@@ -133,7 +133,7 @@ module.exports = function writeImage(
 
       //const browser = await puppeteer.launch();
       const page = await browser.newPage();
-      await page.setViewport({ width: 1920, height: 1080 });
+      await page.setViewport({ width: 1920, height: 969 });
       await page.setContent(html);
       // page.on('console', (log) => console[log._type](log._text));
 
@@ -708,54 +708,73 @@ module.exports = function writeImage(
                   "strain-metric-magnitudes"
                 ).style.display = "none";
               }
+              if (DISPLAY_LABELS) {
+                document.getElementById("strain-metric").style.display = "none";
+              }
             }
 
-            function makeLabel() {
+            function makeLabel(
+              strain_metric_name = "Maximum Principal Strain"
+            ) {
               var sphere = spheres_array[0];
+              if (!(sphere.region && sphere.value)) {
+                return;
+              }
+
               //sphere.material.color.setHex("0xFF0000");
 
-              var myText = new SpriteText(
-                `MPS = ${Math.round(sphere.value * 100)}%\nRegion = ${
-                  sphere.region
-                }`,
-                32
+              var dataLabel = new SpriteText(
+                `${strain_metric_name} = ${Math.round(
+                  sphere.value * 100
+                )}%\nRegion = ${sphere.region}`,
+                16
               );
-              myText.color = "rgba(0,0,0,1)";
-              myText.borderWidth = 0.5;
-              myText.borderColor = "black";
-              myText.backgroundColor = "rgba(255,255,255,1)";
-              myText.padding = 3;
-              myText.scale.set(0.05, 0.03, 0.1);
+              dataLabel.color = "rgba(0,0,0,1)";
+              dataLabel.fontSize = 280;
+              dataLabel.borderWidth = 1.3;
+              dataLabel.borderColor = "black";
+              dataLabel.backgroundColor = "rgba(255,255,255,1)";
+              dataLabel.padding = 5;
+              dataLabel.scale.set(0.13, 0.05, 0.1);
 
               var sphere_position = new THREE.Vector3();
               sphere.getWorldPosition(sphere_position);
 
-              myText.position.set(0.1, 0.1, -0.06);
-              console.log("myText.position", myText.position);
-              myText.layers.set(1);
-              myText.traverse(function (child) {
+              dataLabel.position.set(-0.13, 0.1, 0.04);
+              console.log("dataLabel.position", dataLabel.position);
+              dataLabel.layers.set(1);
+              dataLabel.traverse(function (child) {
                 child.layers.set(1);
               });
-              scene.add(myText);
+              scene.add(dataLabel);
 
               var label_camera = camera.cameras[3];
               label_camera.layers.enable(1);
               camera.layers.enable(1);
 
-              const points = [];
-              points.push(sphere_position);
-              points.push(myText.position);
-              const lineGeometry = new THREE.BufferGeometry().setFromPoints(
-                points
-              );
               const lineMaterial = new THREE.LineBasicMaterial({
                 color: 0x000000,
               });
-              const line = new THREE.Line(lineGeometry, lineMaterial);
+
+              let linePoints = [];
+              // To make line end before dataLabel
+              var offsetPosition = dataLabel.position.clone();
+              offsetPosition.y -= 0.02;
+              linePoints.push(sphere_position, offsetPosition);
+
+              // Create Tube Geometry to make line thicker
+              var tubeGeometry = new THREE.TubeGeometry(
+                new THREE.CatmullRomCurve3(linePoints),
+                512, // path segments
+                0.0008, // THICKNESS
+                8, //Roundness of Tube
+                false //closed
+              );
+
+              let line = new THREE.Line(tubeGeometry, lineMaterial);
               line.layers.set(1);
               scene.add(line);
             }
-            
           });
         },
         {
