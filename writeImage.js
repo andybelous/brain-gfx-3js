@@ -44,6 +44,11 @@ module.exports = function writeImage(
           margin-right: 50px;
           font-size: 32px;
         }
+        .dot-container-small
+        {
+          width: 120px;
+          font-size: 24px;
+        }
         .dot {
             height: 25px;
             width: 25px;
@@ -84,6 +89,10 @@ module.exports = function writeImage(
            left: 50%;
            transform: translate(-50%);
          }
+         .small-grey-text
+         {
+           font-size: 20;
+         }
           </style>
       
       <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js" integrity="sha512-XI02ivhfmEfnk8CEEnJ92ZS6hOqWoWMKF6pxF/tC/DXBVxDXgs2Kmlc9CHA0Aw2dX03nrr8vF54Z6Mqlkuabkw==" crossorigin="anonymous"></script>
@@ -95,7 +104,6 @@ module.exports = function writeImage(
     <body>
       <div id="blur-container">
       <!-- <h1 id="strain-metric" style="position: absolute; top:0; left: 50%; transform: translate(-50%);">Location of Maximum Principal Strain</h1> -->
-      <div id="content" style="margin-top: 70px;"></div>
       <div id="three-content" style="width: 40%; height: 80%; display: inline-block;">
       <div id="canvas-container" style="width: 100%; height: 100%;">
       </div> 
@@ -727,10 +735,25 @@ module.exports = function writeImage(
               // 	document.getElementById("strain-metric").style.display = "none";
               // }
 
-              if (!ENABLE_COLOR_SPHERES)
+              if (!ENABLE_COLOR_SPHERES) {
                 document.getElementById(
                   "strain-metric-magnitudes"
                 ).style.display = "none";
+              }
+              if (ENABLE_CHART) {
+                var elements = document.getElementsByClassName("dot-container");
+                for (let i = 0; i < elements.length; i++) {
+                  elements[i].classList.add("dot-container-small");
+                }
+
+                var elements = document.getElementsByClassName("grey-text");
+                for (let i = 0; i < elements.length; i++) {
+                  elements[i].classList.add("small-grey-text");
+                }
+              }
+
+
+              
             }
 
             function makeLabel(
