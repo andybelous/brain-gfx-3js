@@ -216,6 +216,27 @@ module.exports = function writeImage(
             const highlightColor = 0xadab24;
             const highlightEmissiveIntensity = 0.6;
 
+
+            const SMALL_BOUNDARY = 0.02;
+            const MEDIUM_BOUNDARY = 0.05;
+            const LARGE_BOUNDARY = 0.1;
+
+            const SMALL_COLOR = new THREE.Color(0x00b050);
+            const MEDIUM_COLOR = new THREE.Color(0xed7d31);
+            const LARGE_COLOR = new THREE.Color(0xff0000);
+            const X_LARGE_COLOR = new THREE.Color(0x000000);
+
+            const SMALL_GEOMETRY = new THREE.SphereGeometry(0.0015, 32, 32);
+            const MEDIUM_GEOMETRY = new THREE.SphereGeometry(0.002, 32, 32);
+            const LARGE_GEOMETRY = new THREE.SphereGeometry(0.003, 32, 32);
+            const X_LARGE_GEOMETRY = new THREE.SphereGeometry(
+              0.004,
+              32,
+              32
+            );
+
+
+
             const amount = 2;
             const space = 10;
             const near = 0.1;
@@ -557,23 +578,7 @@ module.exports = function writeImage(
                 // 	color: 0xff0000
                 // });
 
-                const SMALL_BOUNDARY = 0.02;
-                const MEDIUM_BOUNDARY = 0.05;
-                const LARGE_BOUNDARY = 0.1;
 
-                const SMALL_COLOR = new THREE.Color(0x00b050);
-                const MEDIUM_COLOR = new THREE.Color(0xed7d31);
-                const LARGE_COLOR = new THREE.Color(0xff0000);
-                const X_LARGE_COLOR = new THREE.Color(0x000000);
-
-                const SMALL_GEOMETRY = new THREE.SphereGeometry(0.0015, 32, 32);
-                const MEDIUM_GEOMETRY = new THREE.SphereGeometry(0.002, 32, 32);
-                const LARGE_GEOMETRY = new THREE.SphereGeometry(0.003, 32, 32);
-                const X_LARGE_GEOMETRY = new THREE.SphereGeometry(
-                  0.004,
-                  32,
-                  32
-                );
 
                 var sphere_material = sphereMat;
                 var sphere_geometry = sphereGeo;
