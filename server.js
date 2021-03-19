@@ -1,16 +1,15 @@
+const serverless = require('serverless-http');
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 
 const port = 3000;
 const writeImage = require("./writeImage.js");
-const parseSummaryLocations = require("./parseSummaryLocations.js");
-const {
-  uploadToS3,
-  uploadToS3SingleImage,
-  getFileFromS3,
-} = require("./UploadToS3.js");
-const getLabeledImage = require("./GetLabeledImage.js");
+const parseSummaryLocations = require("./parseSummaryLocations.js")
+const {uploadToS3, uploadToS3SingleImage, getFileFromS3} = require("./UploadToS3.js")
+const getLabeledImage = require("./GetLabeledImage.js")
+
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -54,8 +53,7 @@ app.post("/getSummary", function (req, res) {
 
       if (summaryData.Insults) {
         summaryData.Insults.forEach(function (summary_data, index) {
-          parseSummaryLocations(
-            summary_data,
+          parseSummaryLocations(summary_data, 
             principal_max_strain,
             principal_min_strain,
             axonal_strain_max,
@@ -69,7 +67,7 @@ app.post("/getSummary", function (req, res) {
             MPSR_120,
             MPSxSR_28,
             MPSxSR_95,
-            maximum_PSxSR
+            maximum_PSxSR,
           );
         });
       }
@@ -253,7 +251,7 @@ app.post("/getSummary", function (req, res) {
     });
 });
 
-app.post("/GetLabeledImage", getLabeledImage);
+app.post("/GetLabeledImage", getLabeledImage );
 
 app.post("/GetSingleEvent", async function (req, res) {
   if (!req.body.account_id) {
@@ -296,8 +294,7 @@ app.post("/GetSingleEvent", async function (req, res) {
       let MPSxSR_95 = {};
       let maximum_PSxSR = {};
 
-      parseSummaryLocations(
-        summaryData,
+      parseSummaryLocations(summaryData, 
         principal_max_strain,
         principal_min_strain,
         axonal_strain_max,
@@ -311,7 +308,7 @@ app.post("/GetSingleEvent", async function (req, res) {
         MPSR_120,
         MPSxSR_28,
         MPSxSR_95,
-        maximum_PSxSR
+        maximum_PSxSR,
       );
 
       brainRegions["principal-max-strain"] = principal_max_strain;
@@ -333,13 +330,7 @@ app.post("/GetSingleEvent", async function (req, res) {
       const ENABLE_COLOR = true;
       const DISPLAY_CHART = false;
 
-      writeImage(
-        brainRegions,
-        event_id,
-        "principal-max-strain",
-        ENABLE_COLOR,
-        DISPLAY_CHART
-      )
+      writeImage(brainRegions, event_id, "principal-max-strain", ENABLE_COLOR, DISPLAY_CHART)
         .then((data) => {
           return uploadToS3SingleImage(
             req.body.account_id,
@@ -348,13 +339,7 @@ app.post("/GetSingleEvent", async function (req, res) {
           );
         })
         .then((data) => {
-          return writeImage(
-            brainRegions,
-            event_id,
-            `CSDM-5`,
-            ENABLE_COLOR,
-            DISPLAY_CHART
-          );
+          return writeImage(brainRegions, event_id, `CSDM-5`, ENABLE_COLOR, DISPLAY_CHART);
         })
         .then((data) => {
           return uploadToS3SingleImage(
@@ -364,13 +349,7 @@ app.post("/GetSingleEvent", async function (req, res) {
           );
         })
         .then((data) => {
-          return writeImage(
-            brainRegions,
-            event_id,
-            "CSDM-10",
-            ENABLE_COLOR,
-            DISPLAY_CHART
-          );
+          return writeImage(brainRegions, event_id, "CSDM-10", ENABLE_COLOR, DISPLAY_CHART);
         })
         .then((data) => {
           return uploadToS3SingleImage(
@@ -380,13 +359,7 @@ app.post("/GetSingleEvent", async function (req, res) {
           );
         })
         .then((data) => {
-          return writeImage(
-            brainRegions,
-            event_id,
-            "CSDM-15",
-            ENABLE_COLOR,
-            DISPLAY_CHART
-          );
+          return writeImage(brainRegions, event_id, "CSDM-15", ENABLE_COLOR, DISPLAY_CHART);
         })
         .then((data) => {
           return uploadToS3SingleImage(
@@ -396,13 +369,7 @@ app.post("/GetSingleEvent", async function (req, res) {
           );
         })
         .then((data) => {
-          return writeImage(
-            brainRegions,
-            event_id,
-            "CSDM-30",
-            ENABLE_COLOR,
-            DISPLAY_CHART
-          );
+          return writeImage(brainRegions, event_id, "CSDM-30", ENABLE_COLOR, DISPLAY_CHART);
         })
         .then((data) => {
           return uploadToS3SingleImage(
@@ -412,13 +379,7 @@ app.post("/GetSingleEvent", async function (req, res) {
           );
         })
         .then((data) => {
-          return writeImage(
-            brainRegions,
-            event_id,
-            "MPS-95",
-            ENABLE_COLOR,
-            DISPLAY_CHART
-          );
+          return writeImage(brainRegions, event_id, "MPS-95", ENABLE_COLOR, DISPLAY_CHART);
         })
         .then((data) => {
           return uploadToS3SingleImage(
@@ -428,13 +389,7 @@ app.post("/GetSingleEvent", async function (req, res) {
           );
         })
         .then((data) => {
-          return writeImage(
-            brainRegions,
-            event_id,
-            "MPSR-120",
-            ENABLE_COLOR,
-            DISPLAY_CHART
-          );
+          return writeImage(brainRegions, event_id, "MPSR-120", ENABLE_COLOR, DISPLAY_CHART);
         })
         .then((data) => {
           return uploadToS3SingleImage(
@@ -444,13 +399,7 @@ app.post("/GetSingleEvent", async function (req, res) {
           );
         })
         .then((data) => {
-          return writeImage(
-            brainRegions,
-            event_id,
-            "MPSxSR-28",
-            ENABLE_COLOR,
-            DISPLAY_CHART
-          );
+          return writeImage(brainRegions, event_id, "MPSxSR-28", ENABLE_COLOR, DISPLAY_CHART);
         })
         .then((data) => {
           return uploadToS3SingleImage(
@@ -460,13 +409,7 @@ app.post("/GetSingleEvent", async function (req, res) {
           );
         })
         .then((data) => {
-          return writeImage(
-            brainRegions,
-            event_id,
-            "MPSxSR-95",
-            ENABLE_COLOR,
-            DISPLAY_CHART
-          );
+          return writeImage(brainRegions, event_id, "MPSxSR-95", ENABLE_COLOR, DISPLAY_CHART);
         })
         .then((data) => {
           return uploadToS3SingleImage(
@@ -480,8 +423,7 @@ app.post("/GetSingleEvent", async function (req, res) {
             brainRegions,
             event_id,
             "axonal-strain-max",
-            ENABLE_COLOR,
-            DISPLAY_CHART
+            ENABLE_COLOR
           );
         })
         .then((data) => {
@@ -496,8 +438,7 @@ app.post("/GetSingleEvent", async function (req, res) {
             brainRegions,
             event_id,
             "masXsr-15-max",
-            ENABLE_COLOR,
-            DISPLAY_CHART
+            ENABLE_COLOR
           );
         })
         .then((data) => {
@@ -512,8 +453,7 @@ app.post("/GetSingleEvent", async function (req, res) {
             brainRegions,
             event_id,
             "maximum-PSxSR",
-            ENABLE_COLOR,
-            DISPLAY_CHART
+            ENABLE_COLOR
           );
         })
         .then((data) => {
@@ -528,8 +468,7 @@ app.post("/GetSingleEvent", async function (req, res) {
             brainRegions,
             event_id,
             "principal-min-strain",
-            ENABLE_COLOR,
-            DISPLAY_CHART
+            ENABLE_COLOR
           );
         })
         .then((data) => {
@@ -559,7 +498,11 @@ app.post("/GetSingleEvent", async function (req, res) {
       });
     });
 });
-
+/*
 app.listen(process.env.PORT || port, function (err) {
   console.log(`Server is listening at http://localhost:${port}`);
-});
+}); */
+module.exports.handler = serverless(app);
+
+
+
