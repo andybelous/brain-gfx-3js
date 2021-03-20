@@ -8,7 +8,7 @@ sudo usermod -a -G docker $UNAMEX
 cd /home/$UNAMEX
 
 # clone specific branch
-git clone -b tbi-dev https://github.com/PSUCompBio/brain-gfx-3js.git
+git clone -b tbi-dev-rk https://github.com/PSUCompBio/brain-gfx-3js.git
 
 # clone master branch
 #git clone https://github.com/PSUCompBio/brain-gfx-3js.git
