@@ -13,6 +13,6 @@ git clone -b tbi-dev-rk https://github.com/PSUCompBio/brain-gfx-3js.git
 # clone master branch
 #git clone https://github.com/PSUCompBio/brain-gfx-3js.git
 cd brain-gfx-3js
-sudo docker build -t clincialimg .
+sudo docker build -t clincialimg 
 cd /home/$UNAMEX
 sudo chown -R $UNAMEX *
