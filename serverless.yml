@@ -7,13 +7,17 @@ provider:
   memorySize: 512
 functions:
   app:
-    handler: server.handler
-    events: 
-      - http: 
+    handler: server/app.handler
+    events:
+    - http:
           path: /
-          method: ANY
+          method: get
           cors: true
-      - http: 
+      - http:
+          path: /getSummary
+          method: post
+          cors: true
+      - http:
           path: /{proxy+}
           method: ANY
           cors: true
