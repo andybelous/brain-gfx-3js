@@ -30,7 +30,7 @@ Should create a example.png
 - Login to aws: aws configure
 - Login to ecr: sudo $(aws ecr get-login --region us-east-1 --no-include-email)
 - Get docker image ID: sudo docker image ls
-- Tag docker image: sudo docker tag <ImageID> <AwsAccountID>.dkr.ecr.us-east-1.amazonaws.com/nodetest
+- Tag docker image: sudo docker tag <ImageID> <AwsAccountID>.dkr.ecr.us-east-1.amazonaws.com/clinicalimg
 -- Note: you can go to AWS ECR repos to get URL above.
 - Push docker to ecr: sudo docker push <AWS-Account-ID>.dkr.ecr.us-east-1.amazonaws.com/
 - Update lambda function with latest docker image (this has to be done manually)
