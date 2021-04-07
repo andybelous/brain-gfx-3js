@@ -10,9 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.842.0",
+    "chrome-aws-lambda": "^8.0.2",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
-    "puppeteer": "^7.1.0",
     "serverless-http": "^2.7.0"
   }
 }
+

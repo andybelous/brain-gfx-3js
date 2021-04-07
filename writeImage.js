@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+const chromium = require("chrome-aws-lambda");
 module.exports = function writeImage(
   summaryData,
   account_id,
@@ -121,15 +121,20 @@ module.exports = function writeImage(
     </html>`;
 
     (async () => {
-      var args = puppeteer.defaultArgs();
+      var args = chromium.args;
+      
       args.push("--disable-web-security");
       // args = args.filter(arg => arg !== '--headless');
       // Lanch pupeteer with custom arguments
-      const browser = await puppeteer.launch({
+      
+	  console.log("test 1",args);
+	const browser = await chromium.puppeteer.launch({
         headless: true,
         ignoreDefaultArgs: true,
         args,
       });
+
+      console.log("test 1",browser);
 
       //const browser = await puppeteer.launch();
       const page = await browser.newPage();
@@ -779,3 +784,4 @@ module.exports = function writeImage(
     // return 1; // Function returns the product of a and b
   });
 };
+
