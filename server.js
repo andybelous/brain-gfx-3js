@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", async (req, res) => {
 	console.log("req",req);
-	var type = "getSummary";
+	var type = "";
 	if(type == "getSummary"){
 		var account_id = "7558768010";
 		var result = await getSummaryimage(account_id);
@@ -109,7 +109,7 @@ function getSummaryimage(accountid){
 				ENABLE_COLOR
 			  )
 				.then((data) => {
-				  return uploadToS3(accountid, "principal-max-strain.png");
+				  return uploadToS3(accountid, "principal-max-strain.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -120,7 +120,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "CSDM-5.png");
+				  return uploadToS3(accountid, "CSDM-5.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -131,7 +131,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "CSDM-10.png");
+				  return uploadToS3(accountid, "CSDM-10.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -142,7 +142,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "CSDM-15.png");
+				  return uploadToS3(accountid, "CSDM-15.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -153,7 +153,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "CSDM-30.png");
+				  return uploadToS3(accountid, "CSDM-30.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -164,7 +164,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "MPS-95.png");
+				  return uploadToS3(accountid, "MPS-95.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -175,7 +175,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "MPSR-120.png");
+				  return uploadToS3(accountid, "MPSR-120.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -186,7 +186,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "MPSxSR-28.png");
+				  return uploadToS3(accountid, "MPSxSR-28.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -197,7 +197,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "MPSxSR-95.png");
+				  return uploadToS3(accountid, "MPSxSR-95.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -208,7 +208,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "axonal-strain-max.png");
+				  return uploadToS3(accountid, "axonal-strain-max.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -219,7 +219,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "masXsr-15-max.png");
+				  return uploadToS3(accountid, "masXsr-15-max.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -230,7 +230,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "maximum-PSxSR.png");
+				  return uploadToS3(accountid, "maximum-PSxSR.png",data);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -241,7 +241,7 @@ function getSummaryimage(accountid){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "principal-min-strain.png");
+				  return uploadToS3(accountid, "principal-min-strain.png",data);
 				})
 				.then((data) => {
 				  resolve("Images uploaded successfully.");

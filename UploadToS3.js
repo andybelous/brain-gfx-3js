@@ -9,9 +9,9 @@ const s3 = new AWS.S3({
     accessKeyId: accessKeyId,
     secretAccessKey: secretAccessKey,
   });
-function uploadToS3(account_id, file) {
+function uploadToS3(account_id, file,data) {
     return new Promise((resolve, reject) => {
-      const fileContent = fs.readFileSync(`./${account_id}_${file}`);
+      const fileContent =  data;//fs.readFileSync(`./${account_id}_${file}`);
       const path = `${account_id}/simulation/SummaryBrainImages/${file}`;
       const uploadParams = {
         Bucket: bucketName,
@@ -23,7 +23,7 @@ function uploadToS3(account_id, file) {
         if (err) {
           reject(err);
         } else {
-          fs.unlinkSync(`./${account_id}_${file}`);
+         // fs.unlinkSync(`./${account_id}_${file}`);
           resolve({ path: path });
         }
       });

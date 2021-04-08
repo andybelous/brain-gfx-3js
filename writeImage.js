@@ -128,11 +128,18 @@ module.exports = function writeImage(
       // Lanch pupeteer with custom arguments
       
 	  console.log("test 1",args);
-	const browser = await chromium.puppeteer.launch({
+/*	const browser = await chromium.puppeteer.launch({
         headless: true,
         ignoreDefaultArgs: true,
         args,
-      });
+      }); */
+     const   browser = await chromium.puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
+    });
 
       console.log("test 1",browser);
 
@@ -774,11 +781,15 @@ module.exports = function writeImage(
       );
 
       console.log("Successfully rendered:", result);
-      const screenshot = await page.screenshot({
+     /*  const screenshot = await page.screenshot({
         path: account_id + "_" + BRAIN_STRAIN_ACTIVE + ".png",
-      });
+      });  */
+    const base64 = await page.screenshot({
+	 omitBackground: true,
+	encoding: 'binary'
+     })
       await browser.close();
-      resolve(screenshot);
+      resolve(base64);
     })();
 
     // return 1; // Function returns the product of a and b
