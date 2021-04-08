@@ -15,10 +15,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", async (req, res) => {
-	console.log("req",req);
-	var type = "";
+	//console.log("req",req);
+	var type =req.query.ftype;
+	console.log("type",type);
+        console.log("account_id",req.query.account_id);
 	if(type == "getSummary"){
-		var account_id = "7558768010";
+		var account_id = req.query.account_id;;
 		var result = await getSummaryimage(account_id);
 		 res.send(result);
 	}else if(type == "GetLabeledImage"){
