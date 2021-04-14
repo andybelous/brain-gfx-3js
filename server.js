@@ -12,6 +12,8 @@ const {
 } = require("./UploadToS3.js");
 const getLabeledImage = require("./GetLabeledImage.js");
 
+const ENABLE_CSDM_COLOR = false;
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -105,7 +107,7 @@ app.post("/getSummary", function (req, res) {
             brainRegions,
             req.body.account_id,
             "CSDM-5",
-            ENABLE_COLOR
+            ENABLE_CSDM_COLOR
           );
         })
         .then((data) => {
@@ -116,7 +118,7 @@ app.post("/getSummary", function (req, res) {
             brainRegions,
             req.body.account_id,
             "CSDM-10",
-            ENABLE_COLOR
+            ENABLE_CSDM_COLOR
           );
         })
         .then((data) => {
@@ -127,7 +129,7 @@ app.post("/getSummary", function (req, res) {
             brainRegions,
             req.body.account_id,
             "CSDM-15",
-            ENABLE_COLOR
+            ENABLE_CSDM_COLOR
           );
         })
         .then((data) => {
@@ -138,7 +140,7 @@ app.post("/getSummary", function (req, res) {
             brainRegions,
             req.body.account_id,
             "CSDM-30",
-            ENABLE_COLOR
+            ENABLE_CSDM_COLOR
           );
         })
         .then((data) => {
@@ -352,7 +354,7 @@ app.post("/GetSingleEvent", async function (req, res) {
             brainRegions,
             event_id,
             `CSDM-5`,
-            ENABLE_COLOR,
+            ENABLE_CSDM_COLOR,
             DISPLAY_CHART
           );
         })
@@ -368,7 +370,7 @@ app.post("/GetSingleEvent", async function (req, res) {
             brainRegions,
             event_id,
             "CSDM-10",
-            ENABLE_COLOR,
+            ENABLE_CSDM_COLOR,
             DISPLAY_CHART
           );
         })
@@ -384,7 +386,7 @@ app.post("/GetSingleEvent", async function (req, res) {
             brainRegions,
             event_id,
             "CSDM-15",
-            ENABLE_COLOR,
+            ENABLE_CSDM_COLOR,
             DISPLAY_CHART
           );
         })
@@ -400,7 +402,7 @@ app.post("/GetSingleEvent", async function (req, res) {
             brainRegions,
             event_id,
             "CSDM-30",
-            ENABLE_COLOR,
+            ENABLE_CSDM_COLOR,
             DISPLAY_CHART
           );
         })
