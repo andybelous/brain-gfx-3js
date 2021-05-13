@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", async (req, res) => {
-	//console.log("req",req);
+	console.log("req",req.query);
 	var type =req.query.ftype;
 	console.log("type",type);
         console.log("account_id",req.query.account_id);
