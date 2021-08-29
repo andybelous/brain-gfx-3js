@@ -41,13 +41,13 @@ module.exports = function writeImage(
           display: inline-block;
           width: 325px;
           height: 80px;
-          margin-right: 50px;
-          font-size: 32px;
+          /* margin-right: 50px; */
+          font-size: 35px;
         }
         .dot-container-small
         {
-          width: 120px;
-          font-size: 24px;
+          width: 170px;
+          font-size: 35px;
         }
         .dot {
             height: 25px;
@@ -91,7 +91,7 @@ module.exports = function writeImage(
          }
          .small-grey-text
          {
-           font-size: 20;
+           font-size: 24;
          }
           </style>
       
@@ -701,12 +701,12 @@ module.exports = function writeImage(
                       scaleLabel: {
                         display: true,
                         labelString: "Number of Events",
-                        fontSize: 30,
+                        fontSize: 40,
                         fontColor: "#4c4d4d",
                       },
                       ticks: {
                         min: 0,
-                        fontSize: 12,
+                        fontSize: 30,
                       },
                     },
                   ],
@@ -787,7 +787,7 @@ module.exports = function writeImage(
               dataLabel.borderWidth = 1.3;
               dataLabel.borderColor = "black";
               dataLabel.backgroundColor = "rgba(255,255,255,1)";
-              dataLabel.padding = 6;
+              dataLabel.padding = 4;
               dataLabel.scale.set(0.13, 0.04, 0.1);
 
               var sphere_position = new THREE.Vector3();
