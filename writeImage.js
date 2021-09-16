@@ -111,22 +111,22 @@ module.exports = function writeImage(
           <div class="dot-container">
             <span class="green dot"></span>
             <strong>Small</strong>
-            <div class="grey-text">0-2%</div></div>
+            <div class="grey-text">&lt;10%</div></div>
         
           <div class="dot-container">
             <span class="orange dot"></span>
             <strong>Medium</strong>
-            <div class="grey-text">2-5%</div></div>
+            <div class="grey-text">10-18%</div></div>
       
           <div class="dot-container">
             <span class="red dot"></span>
             <strong>Large</strong>
-            <div class="grey-text">5-10%</div></div>
+            <div class="grey-text">18-30%</div></div>
       
           <div class="dot-container">
             <span class="black dot"></span>
             <strong>X-Large</strong>
-            <div class="grey-text">>10%</div></div>
+            <div class="grey-text">&gt;30%%</div></div>
         
             <div style="bottom: 0px;position: relative;left: 50%;transform: translate(-50%);font-size: 32px;font-weight: bold;">Strain Metric Magnitudes</div>
         </div> 
@@ -217,9 +217,9 @@ module.exports = function writeImage(
             const highlightEmissiveIntensity = 0.6;
 
 
-            const SMALL_BOUNDARY = 0.02;
-            const MEDIUM_BOUNDARY = 0.05;
-            const LARGE_BOUNDARY = 0.1;
+            const SMALL_BOUNDARY = 0.1;
+            const MEDIUM_BOUNDARY = 0.18;
+            const LARGE_BOUNDARY = 0.3;
 
             const SMALL_COLOR = new THREE.Color(0x00b050);
             const MEDIUM_COLOR = new THREE.Color(0xed7d31);
