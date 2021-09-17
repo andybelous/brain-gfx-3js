@@ -30,8 +30,13 @@ module.exports = function writeImage(
           display: inline-block;
           width: 100px;
           height: 80px;
-          margin-right: 50px;
-          font-size: 17px;
+          /* margin-right: 50px; */
+          font-size: 35px;
+        }
+        .dot-container-small
+        {
+          width: 170px;
+          font-size: 35px;
         }
         .dot {
             height: 25px;
@@ -73,6 +78,10 @@ module.exports = function writeImage(
            left: 50%;
            transform: translate(-50%);
          }
+         .small-grey-text
+         {
+           font-size: 24;
+         }
           </style>
       
       <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js" integrity="sha512-XI02ivhfmEfnk8CEEnJ92ZS6hOqWoWMKF6pxF/tC/DXBVxDXgs2Kmlc9CHA0Aw2dX03nrr8vF54Z6Mqlkuabkw==" crossorigin="anonymous"></script>
@@ -91,22 +100,22 @@ module.exports = function writeImage(
           <div class="dot-container">
             <span class="green dot"></span>
             <strong>Small</strong>
-            <div class="grey-text">0-2%</div></div>
+            <div class="grey-text">&lt;10%</div></div>
         
           <div class="dot-container">
             <span class="orange dot"></span>
             <strong>Medium</strong>
-            <div class="grey-text">2-5%</div></div>
+            <div class="grey-text">10-18%</div></div>
       
           <div class="dot-container">
             <span class="red dot"></span>
             <strong>Large</strong>
-            <div class="grey-text">5-10%</div></div>
+            <div class="grey-text">18-30%</div></div>
       
           <div class="dot-container">
             <span class="black dot"></span>
             <strong>X-Large</strong>
-            <div class="grey-text">>10%</div></div>
+            <div class="grey-text">&gt;30%%</div></div>
         
             <div style="bottom: 10px;position: relative;left: 50%;transform: translate(-50%);font-size: 20px;font-weight: bold;">Strain Metric Magnitudes</div>
         </div> 
@@ -205,6 +214,27 @@ module.exports = function writeImage(
             const defaultColor = 0x7a5a16;
             const highlightColor = 0xadab24;
             const highlightEmissiveIntensity = 0.6;
+
+
+            const SMALL_BOUNDARY = 0.1;
+            const MEDIUM_BOUNDARY = 0.18;
+            const LARGE_BOUNDARY = 0.3;
+
+            const SMALL_COLOR = new THREE.Color(0x00b050);
+            const MEDIUM_COLOR = new THREE.Color(0xed7d31);
+            const LARGE_COLOR = new THREE.Color(0xff0000);
+            const X_LARGE_COLOR = new THREE.Color(0x000000);
+
+            const SMALL_GEOMETRY = new THREE.SphereGeometry(0.0015, 32, 32);
+            const MEDIUM_GEOMETRY = new THREE.SphereGeometry(0.002, 32, 32);
+            const LARGE_GEOMETRY = new THREE.SphereGeometry(0.003, 32, 32);
+            const X_LARGE_GEOMETRY = new THREE.SphereGeometry(
+              0.004,
+              32,
+              32
+            );
+
+
 
             const amount = 2;
             const space = 10;
@@ -541,23 +571,7 @@ module.exports = function writeImage(
                 // 	color: 0xff0000
                 // });
 
-                const SMALL_BOUNDARY = 0.02;
-                const MEDIUM_BOUNDARY = 0.05;
-                const LARGE_BOUNDARY = 0.1;
 
-                const SMALL_COLOR = new THREE.Color(0x00b050);
-                const MEDIUM_COLOR = new THREE.Color(0xed7d31);
-                const LARGE_COLOR = new THREE.Color(0xff0000);
-                const X_LARGE_COLOR = new THREE.Color(0x000000);
-
-                const SMALL_GEOMETRY = new THREE.SphereGeometry(0.0015, 32, 32);
-                const MEDIUM_GEOMETRY = new THREE.SphereGeometry(0.002, 32, 32);
-                const LARGE_GEOMETRY = new THREE.SphereGeometry(0.003, 32, 32);
-                const X_LARGE_GEOMETRY = new THREE.SphereGeometry(
-                  0.004,
-                  32,
-                  32
-                );
 
                 var sphere_material = sphereMat;
                 var sphere_geometry = sphereGeo;
@@ -680,12 +694,12 @@ module.exports = function writeImage(
                       scaleLabel: {
                         display: true,
                         labelString: "Number of Events",
-                        fontSize: 30,
+                        fontSize: 40,
                         fontColor: "#4c4d4d",
                       },
                       ticks: {
                         min: 0,
-                        fontSize: 12,
+                        fontSize: 30,
                       },
                     },
                   ],
@@ -732,12 +746,13 @@ module.exports = function writeImage(
                 }`,
                 32
               );
-              myText.color = "rgba(0,0,0,1)";
-              myText.borderWidth = 0.5;
-              myText.borderColor = "black";
-              myText.backgroundColor = "rgba(255,255,255,1)";
-              myText.padding = 3;
-              myText.scale.set(0.05, 0.03, 0.1);
+              dataLabel.color = "rgba(0,0,0,1)";
+              //dataLabel.fontSize  = 280;
+              dataLabel.borderWidth = 1.3;
+              dataLabel.borderColor = "black";
+              dataLabel.backgroundColor = "rgba(255,255,255,1)";
+              dataLabel.padding = 4;
+              dataLabel.scale.set(0.13, 0.04, 0.1);
 
               var sphere_position = new THREE.Vector3();
               sphere.getWorldPosition(sphere_position);
