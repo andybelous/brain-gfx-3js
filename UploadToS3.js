@@ -5,7 +5,7 @@ const AWS = require("aws-sdk");
 // const accessKeyId = config.accessKeyId;
 // const secretAccessKey = config.secretAccessKey;
 const bucketName = process.env.bucketName;
-const accessKeyId = process.env.fig.accessKeyId;
+const accessKeyId = process.env.accessKeyId;
 const secretAccessKey = process.env.secretAccessKey;
 
 const s3 = new AWS.S3({
