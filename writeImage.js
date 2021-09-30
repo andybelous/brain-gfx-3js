@@ -18,7 +18,18 @@ module.exports = function writeImage(
     <head>
       <meta charset="utf-8">
       <style>
+    
         body { margin: 0; }
+        #no-spheres-text{
+          display: none;
+          width: 540px;
+          text-align: center;
+          position: absolute;
+          font-size: 70;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+        }
         #c
         {
             width: 100%;
@@ -28,7 +39,7 @@ module.exports = function writeImage(
         .dot-container
         {
           display: inline-block;
-          width: 100px;
+          width: 325px;
           height: 80px;
           /* margin-right: 50px; */
           font-size: 35px;
@@ -47,33 +58,33 @@ module.exports = function writeImage(
          }
          .green
          {
-            height: 5px;
-            width: 5px;
+            height: 10px;
+            width: 10px;
             background-color: #00b050;
          }
          .orange
          {
-          height: 10px;
-          width: 10px;
+          height: 15px;
+          width: 15px;
           background-color: #ed7d31;
          }
          .red
          {
-          height: 15px;
-          width: 15px;
+          height: 20px;
+          width: 20px;
           background-color: #ff0000;
          }
          .black
          {
-          height: 20px;
-          width: 20px;
+          height: 25px;
+          width: 25px;
           background-color: #000000;
          }
          .grey-text
          {
            color: grey;
            width: fit-content;
-           font-size: 12px;
+           font-size: 28px;
            position: relative;
            left: 50%;
            transform: translate(-50%);
@@ -91,12 +102,12 @@ module.exports = function writeImage(
       <script src="https://unpkg.com/three-spritetext"></script>
     </head>
     <body>
-      <h1 id="strain-metric" style="position: absolute; top:0; left: 50%; transform: translate(-50%);">Location of Maximum Principal Strain</h1>
-      <div id="content" style="margin-top: 70px;"></div>
+      <div id="blur-container">
+      <!-- <h1 id="strain-metric" style="position: absolute; top:0; left: 50%; transform: translate(-50%);">Location of Maximum Principal Strain</h1> -->
       <div id="three-content" style="width: 40%; height: 80%; display: inline-block;">
       <div id="canvas-container" style="width: 100%; height: 100%;">
       </div> 
-        <div id="strain-metric-magnitudes" style="bottom: 10;left: 50%;transform: translate(-50%);width: fit-content;display: block;z-index: 20;position: relative;text-align: center;">
+        <div id="strain-metric-magnitudes" style="bottom: 25;left: 50%;transform: translate(-50%);width: fit-content;display: block;z-index: 20;position: relative;text-align: center;">
           <div class="dot-container">
             <span class="green dot"></span>
             <strong>Small</strong>
@@ -117,13 +128,15 @@ module.exports = function writeImage(
             <strong>X-Large</strong>
             <div class="grey-text">&gt;30%%</div></div>
         
-            <div style="bottom: 10px;position: relative;left: 50%;transform: translate(-50%);font-size: 20px;font-weight: bold;">Strain Metric Magnitudes</div>
+            <div style="bottom: 0px;position: relative;left: 50%;transform: translate(-50%);font-size: 32px;font-weight: bold;">Strain Metric Magnitudes</div>
         </div> 
       
       </div>
       <div id="chart-container" style = "display:inline-block; width: 50%; height: 80%; margin-left: 5%;">
         <canvas id="chart" style="width: 100%;height: 100%;"></canvas>
       </div>
+    </div>
+      <div id="no-spheres-text">No threshold of strain was reached.</div>
     
     <script src="index.js"></script>
     </body>
@@ -549,6 +562,12 @@ module.exports = function writeImage(
             function showAllSpheres() {
               // console.log('showing allshpere')
               // console.log('showAllSpheres------------------------\n',all_spheres_json)
+              if (all_spheres_json.length == 0) {
+                document.getElementById("blur-container").style.filter =
+                  "blur(3px)";
+                document.getElementById("no-spheres-text").style.display =
+                  "block";
+              }
               all_spheres_json.forEach(function (object, index) {
                 var i = parseInt(index + 1);
                 generateSphere(
@@ -726,25 +745,54 @@ module.exports = function writeImage(
                 options: options,
               });
 
-              document.getElementById(
-                "strain-metric"
-              ).innerHTML = brainStrainActive;
+              //Enable title display
+              //document.getElementById("strain-metric").innerHTML = brainStrainActive;
+              // if(DISPLAY_LABELS)
+              // {
+              // 	document.getElementById("strain-metric").style.display = "none";
+              // }
+
               if (!ENABLE_COLOR_SPHERES) {
                 document.getElementById(
                   "strain-metric-magnitudes"
                 ).style.display = "none";
               }
+              if (ENABLE_CHART) {
+                var elements = document.getElementsByClassName("dot-container");
+                for (let i = 0; i < elements.length; i++) {
+                  elements[i].classList.add("dot-container-small");
+                }
+
+                var elements = document.getElementsByClassName("grey-text");
+                for (let i = 0; i < elements.length; i++) {
+                  elements[i].classList.add("small-grey-text");
+                }
+              }
+
+
+              
             }
 
-            function makeLabel() {
+            function makeLabel(
+              strain_metric_name = "Maximum Principal Strain"
+            ) {
               var sphere = spheres_array[0];
+              if (!(sphere.region && sphere.value)) {
+                return;
+              }
+
               //sphere.material.color.setHex("0xFF0000");
 
-              var myText = new SpriteText(
-                `MPS = ${Math.round(sphere.value * 100)}%\nRegion = ${
-                  sphere.region
-                }`,
-                32
+              var region = sphere.region;
+              if (region == "msc") {
+                region = "Motor Sensory Cortex";
+              }
+              //region = "Motor Sensory Cortex"
+              var dataLabel = new SpriteText(
+                `${strain_metric_name} = ${Math.round(
+                  sphere.value * 100
+                )}%\nRegion = ${region}`,
+                16
               );
               dataLabel.color = "rgba(0,0,0,1)";
               //dataLabel.fontSize  = 280;
@@ -757,32 +805,41 @@ module.exports = function writeImage(
               var sphere_position = new THREE.Vector3();
               sphere.getWorldPosition(sphere_position);
 
-              myText.position.set(0.1, 0.1, -0.06);
-              console.log("myText.position", myText.position);
-              myText.layers.set(1);
-              myText.traverse(function (child) {
+              dataLabel.position.set(-0.13, 0.1, 0.04);
+              console.log("dataLabel.position", dataLabel.position);
+              dataLabel.layers.set(1);
+              dataLabel.traverse(function (child) {
                 child.layers.set(1);
               });
-              scene.add(myText);
+              scene.add(dataLabel);
 
               var label_camera = camera.cameras[3];
               label_camera.layers.enable(1);
               camera.layers.enable(1);
 
-              const points = [];
-              points.push(sphere_position);
-              points.push(myText.position);
-              const lineGeometry = new THREE.BufferGeometry().setFromPoints(
-                points
-              );
               const lineMaterial = new THREE.LineBasicMaterial({
                 color: 0x000000,
               });
-              const line = new THREE.Line(lineGeometry, lineMaterial);
+
+              let linePoints = [];
+              // To make line end before dataLabel
+              var offsetPosition = dataLabel.position.clone();
+              offsetPosition.y -= 0.02;
+              linePoints.push(sphere_position, offsetPosition);
+
+              // Create Tube Geometry to make line thicker
+              var tubeGeometry = new THREE.TubeGeometry(
+                new THREE.CatmullRomCurve3(linePoints),
+                512, // path segments
+                0.0008, // THICKNESS
+                8, //Roundness of Tube
+                false //closed
+              );
+
+              let line = new THREE.Line(tubeGeometry, lineMaterial);
               line.layers.set(1);
               scene.add(line);
             }
-            
           });
         },
         {
@@ -799,15 +856,14 @@ module.exports = function writeImage(
      /*  const screenshot = await page.screenshot({
         path: account_id + "_" + BRAIN_STRAIN_ACTIVE + ".png",
       });  */
-    const base64 = await page.screenshot({
-	 omitBackground: true,
-	encoding: 'binary'
-     })
-      await browser.close();
-      resolve(base64);
+      const base64 = await page.screenshot({
+        omitBackground: true,
+       encoding: 'binary'
+          })
+           await browser.close();
+           resolve(base64);
     })();
 
     // return 1; // Function returns the product of a and b
   });
 };
-
