@@ -800,12 +800,12 @@ module.exports = function writeImage(
               dataLabel.borderColor = "black";
               dataLabel.backgroundColor = "rgba(255,255,255,1)";
               dataLabel.padding = 4;
-              dataLabel.scale.set(0.13, 0.04, 0.1);
+              dataLabel.scale.set(0.12, 0.04, 0.1);
 
               var sphere_position = new THREE.Vector3();
               sphere.getWorldPosition(sphere_position);
 
-              dataLabel.position.set(-0.13, 0.1, 0.04);
+              dataLabel.position.set(-0.115, 0.1, 0.04)
               console.log("dataLabel.position", dataLabel.position);
               dataLabel.layers.set(1);
               dataLabel.traverse(function (child) {
