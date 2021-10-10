@@ -149,7 +149,7 @@ module.exports = function writeImage(
       // args = args.filter(arg => arg !== '--headless');
       // Lanch pupeteer with custom arguments
       
-	  console.log("test 1",args);
+	  // console.log("test 1",args);
 /*	const browser = await chromium.puppeteer.launch({
         headless: true,
         ignoreDefaultArgs: true,
@@ -163,7 +163,7 @@ module.exports = function writeImage(
       ignoreHTTPSErrors: true,
     });
 
-      console.log("test 1",browser);
+      // console.log("test 1",browser);
 
       //const browser = await puppeteer.launch();
       const page = await browser.newPage();
