@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 
-const port = 3000;
+const port = 3006;
 const writeImage = require("./writeImage.js");
 const parseSummaryLocations = require("./parseSummaryLocations.js");
 const {uploadToS3, uploadToS3SingleImage, uploadToS3SingleLabeledImage, getFileFromS3} = require("./UploadToS3.js");
@@ -1243,9 +1243,9 @@ app.post("/GetSingleEvent", async function (req, res) {
     });
 });
 
-/* app.listen(process.env.PORT || port, function (err) {
-  console.log(`Server is listening at http://localhost:${port}`);
-}); */
+//  app.listen(process.env.PORT || port, function (err) {
+//   console.log(`Server is listening at http://localhost:${port}`);
+// }); 
 module.exports.handler = serverless(app);
 
 

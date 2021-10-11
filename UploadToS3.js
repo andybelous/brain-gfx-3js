@@ -1,6 +1,6 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
-//const config = require("./config/configuration_keys.json");
+// const config = require("./config/configuration_keys.json");
 // const bucketName = config.bucketName;
 // const accessKeyId = config.accessKeyId;
 // const secretAccessKey = config.secretAccessKey;
