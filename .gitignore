@@ -106,3 +106,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+
+# brain images
+settings.json
+package-lock.json

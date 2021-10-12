@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+const chromium = require("chrome-aws-lambda");
 module.exports = function writeImage(
   summaryData,
   account_id,
@@ -143,19 +143,31 @@ module.exports = function writeImage(
     </html>`;
 
     (async () => {
-      var args = puppeteer.defaultArgs();
+      var args = chromium.args;
+      
       args.push("--disable-web-security");
       // args = args.filter(arg => arg !== '--headless');
       // Lanch pupeteer with custom arguments
-      const browser = await puppeteer.launch({
+      
+	  // console.log("test 1",args);
+/*	const browser = await chromium.puppeteer.launch({
         headless: true,
         ignoreDefaultArgs: true,
         args,
-      });
+      }); */
+     const   browser = await chromium.puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
+    });
+
+      // console.log("test 1",browser);
 
       //const browser = await puppeteer.launch();
       const page = await browser.newPage();
-      await page.setViewport({ width: 1920, height: 969 });
+      await page.setViewport({ width: 1920, height: 1080 });
       await page.setContent(html);
       // page.on('console', (log) => console[log._type](log._text));
 
@@ -788,12 +800,12 @@ module.exports = function writeImage(
               dataLabel.borderColor = "black";
               dataLabel.backgroundColor = "rgba(255,255,255,1)";
               dataLabel.padding = 4;
-              dataLabel.scale.set(0.13, 0.04, 0.1);
+              dataLabel.scale.set(0.12, 0.04, 0.1);
 
               var sphere_position = new THREE.Vector3();
               sphere.getWorldPosition(sphere_position);
 
-              dataLabel.position.set(-0.13, 0.1, 0.04);
+              dataLabel.position.set(-0.115, 0.1, 0.04)
               console.log("dataLabel.position", dataLabel.position);
               dataLabel.layers.set(1);
               dataLabel.traverse(function (child) {
@@ -841,11 +853,15 @@ module.exports = function writeImage(
       );
 
       console.log("Successfully rendered:", result);
-      const screenshot = await page.screenshot({
+     /*  const screenshot = await page.screenshot({
         path: account_id + "_" + BRAIN_STRAIN_ACTIVE + ".png",
-      });
-      await browser.close();
-      resolve(screenshot);
+      });  */
+      const base64 = await page.screenshot({
+        omitBackground: true,
+       encoding: 'binary'
+          })
+           await browser.close();
+           resolve(base64);
     })();
 
     // return 1; // Function returns the product of a and b
