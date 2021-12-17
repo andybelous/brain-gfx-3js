@@ -1,12 +1,12 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
-// const config = require("./config/configuration_keys.json");
-// const bucketName = config.bucketName;
-// const accessKeyId = config.accessKeyId;
-// const secretAccessKey = config.secretAccessKey;
-const bucketName = process.env.bucketName;
-const accessKeyId = process.env.accessKeyId;
-const secretAccessKey = process.env.secretAccessKey;
+const config = require("./config/configuration_keys.json");
+const bucketName = config.bucketName;
+const accessKeyId = config.accessKeyId;
+const secretAccessKey = config.secretAccessKey;
+// const bucketName = process.env.bucketName;
+// const accessKeyId = process.env.accessKeyId;
+// const secretAccessKey = process.env.secretAccessKey;
 
 const s3 = new AWS.S3({
     accessKeyId: accessKeyId,
@@ -62,6 +62,7 @@ function uploadToS3(account_id, file,data) {
       };
       s3.getObject(params, function (err, data) {
         if (err) {
+          console.log("err permssion",err)
           reject(err);
         } else {
           resolve(data);

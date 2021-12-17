@@ -897,10 +897,10 @@ app.post("/GetSingleEvent", async function (req, res) {
 
 });
 
-// app.listen(process.env.PORT || port, function (err) {
-//   console.log(`Server is listening at http://localhost:${port}`);
-// }); 
-module.exports.handler = serverless(app);
+app.listen(process.env.PORT || port, function (err) {
+  console.log(`Server is listening at http://localhost:${port}`);
+}); 
+//module.exports.handler = serverless(app);
 
 
 
