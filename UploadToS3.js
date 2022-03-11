@@ -29,6 +29,29 @@ function uploadToS3(account_id, file,data) {
       });
     });
   }
+
+
+  function uploadToS3TeamImages(team_id, file,data) {
+    return new Promise((resolve, reject) => {
+      const fileContent =  data;//fs.readFileSync(`./${account_id}_${file}`);
+      const path = `/team/${team_id}/simulation/SummaryBrainImages/${file}`;
+      const uploadParams = {
+        Bucket: bucketName,
+        Key: path,
+        Body: fileContent,
+        // ACL: 'public-read'
+      };
+      s3.upload(uploadParams, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+         // fs.unlinkSync(`./${account_id}_${file}`);
+          resolve({ path: path });
+        }
+      });
+    });
+  }
+  
   
   function uploadToS3SingleImage(account_id, event_id, file,data) {
     return new Promise((resolve, reject) => {
@@ -93,3 +116,5 @@ function uploadToS3(account_id, file,data) {
   exports.uploadToS3SingleImage = uploadToS3SingleImage;
   exports.uploadToS3SingleLabeledImage = uploadToS3SingleLabeledImage;
   exports.getFileFromS3 = getFileFromS3;
+
+  exports.uploadToS3TeamImages = uploadToS3TeamImages;
