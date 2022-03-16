@@ -1,15 +1,35 @@
 const serverless = require('serverless-http');
 const express = require("express");
 const bodyParser = require("body-parser");
+var mongoose = require("mongoose");
 const app = express();
 
 const port = 3000;
 const writeImage = require("./writeImage.js");
 const parseSummaryLocations = require("./parseSummaryLocations.js");
 const parseArrayData = require("./parseArrayData.js")
-const {uploadToS3, uploadToS3SingleImage, uploadToS3SingleLabeledImage, getFileFromS3, uploadToS3TeamImages} = require("./UploadToS3.js");
+const {uploadToS3, uploadToS3SingleImage, uploadToS3SingleLabeledImage, getFileFromS3, uploadToS3TeamImages, getTeamFileFromS3} = require("./UploadToS3.js");
 const getLabeledImage = require("./GetLabeledImage.js");
+const SensorDetailsModel = require("./models/sensors/sensorDetailsData");
 
+
+
+var config = require('./config/configuration_keys.json')
+
+
+// Mongo connect
+var MONGODB_URL = config.MONGODB_URL;
+mongoose.connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true}).then(() => {
+    //don't show the log when it is test
+    if (process.env.NODE_ENV !== "test") {
+        console.log("Connected to %s", MONGODB_URL);
+        console.log("App is running ... \n");
+    }
+})
+    .catch(err => {
+        console.error("App starting error:", err.message);
+        process.exit(1);
+    });
 
 const ENABLE_CSDM_COLOR = false;
 
@@ -283,6 +303,7 @@ function getTeamSummaryimage(team_id, teamSummary){
 			  }
 			  //console.log("summaryJson", teamSummary)
 			  //summaryData = JSON.parse(summaryJson.toString("utf-8"));
+			  
 			  const summaryData = teamSummary;
 
 			  let brainRegions = {};
@@ -1052,6 +1073,104 @@ function GetSingleEventimage(account_id,event_id){
 }
 
 
+
+function getSimDeatils (query) {
+    console.log('query', query)
+    return new Promise(async (resolve, reject) => {
+        SensorDetailsModel.aggregate([
+            {
+                $match: {
+                    team_id: {
+                        $eq: mongoose.Types.ObjectId(query.team_id)
+                    }
+
+                }
+            },
+            {
+                "$lookup": {
+                    from: 'users',
+                    localField: 'account_id',
+                    foreignField: 'account_id',
+                    as: 'users'
+                }
+            },
+            {
+                $group: {
+                    _id: "$account_id",
+                    total: { $sum: 1 },
+                    doc: { "$first": "$$ROOT" }
+                }
+            },
+            {
+                $project: {
+                    "doc.players": 1,
+                    "doc.simulation_status": 1,
+                    "doc.users._id": 1,
+                    "doc.account_id": 1,
+                    "doc.users.team_status": 1,
+                }
+            }
+        ]).exec((err, result) => {
+            if (err) {
+				console.log("Error")
+                reject(err);
+            } else {
+				console.log("Result")
+                resolve(result);
+            }
+        });
+    })
+}
+
+async function getStatsSummaryData (team_id) {
+    try {
+        const PlayersData = await getSimDeatils({ team_id });
+        //console.log('summary data ---------------------------', PlayersData);
+        let statSummaryData = [];
+        let playerProfile = [];
+        if (PlayersData) {
+
+            //console.log('PlayersData :: ', PlayersData)
+            var processData = PlayersData.map(function (player, index) {
+                //console.log('player', player.doc)
+                let playerData = player.doc.users[0];
+                if (!playerData || playerData.team_status !== 1) return null;
+                let url = `${player.doc.account_id}/simulation/summary.json`;
+                // let summary = await getFileFromS3(url);
+                return getTeamFileFromS3(url)
+                    .then((summary) => {
+                        if (summary && summary.Body) {
+                            var summaryOutPut = JSON.parse(summary.Body.toString('utf-8'));
+                            statSummaryData.push(summaryOutPut);
+                            playerProfile.push({ player: player.doc.players });
+                            return null
+                        } else {
+                            return null
+                        }
+                    })
+                    .catch((e) => {
+                        console.log(e)
+                        return null
+                    })
+            })
+        }
+
+		var result;
+		try
+		{
+			result = await Promise.all(processData);
+			return statSummaryData;
+		}
+		catch (err)
+		{
+			throw err;
+		}
+		
+    } catch (err) {
+        throw err
+    }
+}
+
 app.post("/getTeamSummary", function (req, res) {
 	if (!req.body.team_id) {
 	  return res.status(500).send({
@@ -1059,20 +1178,57 @@ app.post("/getTeamSummary", function (req, res) {
 		error: "team_id is required",
 	  });
 		}
-		const { team_id, teamSummary } = req.body;
-		  
-		  getTeamSummaryimage(team_id, teamSummary).then((data) => {
-			res.send({
-			  status: 200,
-			  message: "Images uploaded successfully.",
-			});
-		  })
-		  .catch((err) => {
+		const { team_id } = req.body;
+
+
+
+		
+		//console.log("getStatsSummaryData Success", team_summary)
+		getStatsSummaryData(team_id).then((team_data) => {
+		
+			console.log("getStatsSummaryData Success", team_data)
+
+			// Team summary aggregation
+			const newSummary = {
+				Insults: [],
+			};
+
+			team_data.forEach((record)=>
+			{
+				record.Insults.forEach((insult =>
+					{
+						newSummary.Insults.push(insult);
+					}
+					))
+			})
+
+			//console.log("newSummary", newSummary)
+
+
+			getTeamSummaryimage(team_id, newSummary).then((data) => {
+				res.send({
+				  status: 200,
+				  message: "Images uploaded successfully.",
+				});
+			  })
+			  .catch((err) => {
+				res.status(500).send({
+				  status: 500,
+				  error: err.message,
+				});
+			  });
+			
+
+			
+		  }).catch((err) => {
+			  console.log("Error", err)
 			res.status(500).send({
 			  status: 500,
 			  error: err.message,
 			});
 		  });
+		  
+
   });
 
 app.post("/getSummary", function (req, res) {
