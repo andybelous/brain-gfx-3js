@@ -4,14 +4,16 @@ const config = require("./config/configuration_keys.json");
 const bucketName = config.bucketName;
 const accessKeyId = config.accessKeyId;
 const secretAccessKey = config.secretAccessKey;
-// const bucketName = process.env.bucketName;
-// const accessKeyId = process.env.accessKeyId;
-// const secretAccessKey = process.env.secretAccessKey;
 
 const s3 = new AWS.S3({
     accessKeyId: accessKeyId,
     secretAccessKey: secretAccessKey,
   });
+
+
+var s3_without_acceleration = new AWS.S3()
+
+  
 function uploadToS3(account_id, file,data) {
     return new Promise((resolve, reject) => {
       const fileContent =  data;//fs.readFileSync(`./${account_id}_${file}`);
@@ -32,6 +34,29 @@ function uploadToS3(account_id, file,data) {
       });
     });
   }
+
+
+  function uploadToS3TeamImages(team_id, file,data) {
+    return new Promise((resolve, reject) => {
+      const fileContent =  data;//fs.readFileSync(`./${account_id}_${file}`);
+      const path = `/team/${team_id}/simulation/SummaryBrainImages/${file}`;
+      const uploadParams = {
+        Bucket: bucketName,
+        Key: path,
+        Body: fileContent,
+        // ACL: 'public-read'
+      };
+      s3.upload(uploadParams, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+         // fs.unlinkSync(`./${account_id}_${file}`);
+          resolve({ path: path });
+        }
+      });
+    });
+  }
+  
   
   function uploadToS3SingleImage(account_id, event_id, file,data) {
     return new Promise((resolve, reject) => {
@@ -70,6 +95,28 @@ function uploadToS3(account_id, file,data) {
       });
     });
   }
+
+  function getTeamFileFromS3 (url, bucket_name) {
+    console.log('url ---------------', url)
+    return new Promise((resolve, _reject) => {
+        const params = {
+            Bucket: bucket_name ? bucket_name : config.usersbucket,
+            Key: url
+        };
+        console.log('params ::: ', params)
+        const fetchs3object = bucket_name === 'nsf-defaults' ? s3_without_acceleration : s3
+        fetchs3object.getObject(params, function (err, data) {
+            if (err) {
+                console.log('e',err)
+                // reject(err)
+                resolve(null);
+            }
+            else {
+                resolve(data);
+            }
+        });
+    })
+}
   
 
   function uploadToS3SingleLabeledImage(account_id, event_id, file,data) {
@@ -97,3 +144,6 @@ function uploadToS3(account_id, file,data) {
   exports.uploadToS3SingleImage = uploadToS3SingleImage;
   exports.uploadToS3SingleLabeledImage = uploadToS3SingleLabeledImage;
   exports.getFileFromS3 = getFileFromS3;
+  exports.getTeamFileFromS3 = getTeamFileFromS3;
+
+  exports.uploadToS3TeamImages = uploadToS3TeamImages;

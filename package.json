@@ -13,6 +13,7 @@
     "chrome-aws-lambda": "^8.0.2",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
+    "mongoose": "^6.2.6",
     "puppeteer-core": "^8.0.0",
     "serverless-http": "^2.7.0"
   },
