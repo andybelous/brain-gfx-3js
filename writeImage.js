@@ -776,7 +776,12 @@ module.exports = function writeImage(
             function makeLabel(
               strain_metric_name = "Maximum Principal Strain"
             ) {
+              if(spheres_array.length === 0)
+              {
+                return;
+              }
               var sphere = spheres_array[0];
+
               if (!(sphere.region && sphere.value)) {
                 return;
               }
