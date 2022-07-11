@@ -369,28 +369,28 @@ function getTeamSummaryimage(team_id, teamSummary){
 				.then((data) => {
 				  return uploadToS3TeamImages(team_id, "principal-max-strain.png",data);
 				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"CSDM-5",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "CSDM-5.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"CSDM-10",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "CSDM-10.png",data);
-				})
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"CSDM-5",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "CSDM-5.png",data);
+				// })
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"CSDM-10",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "CSDM-10.png",data);
+				// })
 				.then((data) => {
 				  return writeImage(
 					brainRegions,
@@ -402,105 +402,105 @@ function getTeamSummaryimage(team_id, teamSummary){
 				.then((data) => {
 				  return uploadToS3TeamImages(team_id, "CSDM-15.png",data);
 				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"CSDM-30",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "CSDM-30.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"MPS-95",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "MPS-95.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"MPSR-120",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "MPSR-120.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"MPSxSR-28",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "MPSxSR-28.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"MPSxSR-95",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "MPSxSR-95.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"axonal-strain-max",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "axonal-strain-max.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"masXsr-15-max",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "masXsr-15-max.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"maximum-PSxSR",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "maximum-PSxSR.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"principal-min-strain",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "principal-min-strain.png",data);
-				})
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"CSDM-30",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "CSDM-30.png",data);
+				// })
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"MPS-95",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "MPS-95.png",data);
+				// })
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"MPSR-120",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "MPSR-120.png",data);
+				// })
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"MPSxSR-28",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "MPSxSR-28.png",data);
+				// })
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"MPSxSR-95",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "MPSxSR-95.png",data);
+				// })
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"axonal-strain-max",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "axonal-strain-max.png",data);
+				// })
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"masXsr-15-max",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "masXsr-15-max.png",data);
+				// })
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"maximum-PSxSR",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "maximum-PSxSR.png",data);
+				// })
+				// .then((data) => {
+				//   return writeImage(
+				// 	brainRegions,
+				// 	accountid,
+				// 	"principal-min-strain",
+				// 	ENABLE_COLOR
+				//   );
+				// })
+				// .then((data) => {
+				//   return uploadToS3TeamImages(team_id, "principal-min-strain.png",data);
+				// })
 				.then((data) => {
 				  resolve("Images uploaded successfully.");
 				})
@@ -1308,9 +1308,9 @@ app.post("/GetSingleEvent", async function (req, res) {
 
 });
 
-// app.listen(process.env.PORT || port, function (err) {
-//   console.log(`Server is listening at http://localhost:${port}`);
-// }); 
+app.listen(process.env.PORT || port, function (err) {
+  console.log(`Server is listening at http://localhost:${port}`);
+}); 
 module.exports.handler = serverless(app);
 
 
