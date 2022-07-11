@@ -1,4 +1,7 @@
 const chromium = require("chrome-aws-lambda");
+const fs = require('fs');
+
+
 module.exports = function writeImage(
   summaryData,
   account_id,
@@ -13,6 +16,53 @@ module.exports = function writeImage(
     const BRAIN_MODEL_RAW_URL = "https://glb-model.s3.amazonaws.com/brain1.glb";
     //const BRAIN_STRAIN_ACTIVE = "principal-max-strain";
     console.log("In writeImage function");
+
+    const no_data_image = fs.readFileSync('./no_data_image.png');
+
+    function check_if_no_spheres (brainStrainActive, brainRegions)
+    {
+      var frontal_lobe_json = brainRegions[brainStrainActive]
+        ? brainRegions[brainStrainActive].frontal || []
+        : [];
+      var cerebellum_lobe_json = brainRegions[brainStrainActive]
+        ? brainRegions[brainStrainActive].cerebellum || []
+        : [];
+      var occipital_lobe_json = brainRegions[brainStrainActive]
+        ? brainRegions[brainStrainActive].occipital || []
+        : [];
+      var pariental_lobe_json = brainRegions[brainStrainActive]
+        ? brainRegions[brainStrainActive].parietal || []
+        : [];
+      var temporal_lobe_json = brainRegions[brainStrainActive]
+        ? brainRegions[brainStrainActive].temporal || []
+        : [];
+      var middle_part_of_the_brain_json = brainRegions[brainStrainActive]
+        ? brainRegions[brainStrainActive].msc || []
+        : [];
+      var stem_json = brainRegions[brainStrainActive]
+        ? brainRegions[brainStrainActive].stem || []
+        : [];
+      //csf_json = this.props.brainRegions[brainStrainActive].csf || []
+      var all_spheres_json = [];
+      all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
+      all_spheres_json = all_spheres_json.concat(cerebellum_lobe_json);
+      all_spheres_json = all_spheres_json.concat(occipital_lobe_json);
+      all_spheres_json = all_spheres_json.concat(pariental_lobe_json);
+      all_spheres_json = all_spheres_json.concat(temporal_lobe_json);
+      all_spheres_json = all_spheres_json.concat(
+        middle_part_of_the_brain_json
+      );
+      all_spheres_json = all_spheres_json.concat(stem_json);
+
+      return all_spheres_json.length == 0;
+  }
+
+    if(check_if_no_spheres(BRAIN_STRAIN_ACTIVE, summaryData))
+    {
+      console.log("no spheres, return no_data_image")
+      resolve(no_data_image);
+      return;
+    }
 
     const html = `<html>
     <head>
@@ -142,7 +192,7 @@ module.exports = function writeImage(
     </body>
     </html>`;
 
-    (async () => {
+    async function executeScript () {
       var args = chromium.args;
       
       args.push("--disable-web-security");
@@ -867,7 +917,9 @@ module.exports = function writeImage(
           })
            await browser.close();
            resolve(base64);
-    })();
+    };
+
+    executeScript();
 
     // return 1; // Function returns the product of a and b
   });
