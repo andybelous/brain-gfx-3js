@@ -2,17 +2,13 @@ const fs = require("fs");
 const AWS = require("aws-sdk");
 const config = require("./config/configuration_keys.json");
 const bucketName = config.bucketName;
-const accessKeyId = config.accessKeyId;
-const secretAccessKey = config.secretAccessKey;
+const accessKeyId = config.awsAccessKeyId;
+const secretAccessKey = config.awsSecretAccessKey;
 
 const s3 = new AWS.S3({
-    accessKeyId: accessKeyId,
-    secretAccessKey: secretAccessKey,
-  });
-
-
-var s3_without_acceleration = new AWS.S3()
-
+  accessKeyId: accessKeyId,
+  secretAccessKey: secretAccessKey,
+})
   
 function uploadToS3(account_id, file,data) {
     return new Promise((resolve, reject) => {
@@ -46,6 +42,7 @@ function uploadToS3(account_id, file,data) {
         Body: fileContent,
         // ACL: 'public-read'
       };
+	  console.log('uploadParams ::: ', uploadParams)
       s3.upload(uploadParams, (err, data) => {
         if (err) {
           reject(err);
@@ -103,9 +100,7 @@ function uploadToS3(account_id, file,data) {
             Bucket: bucket_name ? bucket_name : config.usersbucket,
             Key: url
         };
-        console.log('params ::: ', params)
-        const fetchs3object = bucket_name === 'nsf-defaults' ? s3_without_acceleration : s3
-        fetchs3object.getObject(params, function (err, data) {
+        s3.getObject(params, function (err, data) {
             if (err) {
                 console.log('e',err)
                 // reject(err)
