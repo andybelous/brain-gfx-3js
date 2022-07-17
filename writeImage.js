@@ -17,7 +17,7 @@ module.exports = function writeImage(
     //const BRAIN_STRAIN_ACTIVE = "principal-max-strain";
     console.log("In writeImage function");
 
-    const no_data_image = fs.readFileSync('./no_data_image.png');
+
 
     function check_if_no_spheres (brainStrainActive, brainRegions)
     {
@@ -60,9 +60,20 @@ module.exports = function writeImage(
     if(check_if_no_spheres(BRAIN_STRAIN_ACTIVE, summaryData))
     {
       console.log("no spheres, return no_data_image")
-      resolve(no_data_image);
-      return;
+        fs.readFile('./no_data_image.png', (err, no_data_image)=>{
+          if (err) {
+            console.error(err);
+            return;
+          }
+        
+          resolve(no_data_image);
+          return;
+      });
     }
+    else 
+    {
+
+
 
     const html = `<html>
     <head>
@@ -920,7 +931,10 @@ module.exports = function writeImage(
     };
 
     executeScript();
+  
+  }
 
     // return 1; // Function returns the product of a and b
   });
+  
 };
