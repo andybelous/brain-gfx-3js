@@ -110,3 +110,4 @@ dist
 # brain images
 settings.json
 package-lock.json
+.vscode
