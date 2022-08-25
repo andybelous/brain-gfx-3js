@@ -38,7 +38,7 @@ function uploadToS3(account_id, file,data) {
 
   function uploadToS3TeamImages(team_id, file,data) {
     return new Promise((resolve, reject) => {
-      const fileContent =  data;//fs.readFileSync(`./${account_id}_${file}`);
+      const fileContent = data;//fs.readFileSync(`./${account_id}_${file}`);
       const path = `/team/${team_id}/simulation/SummaryBrainImages/${file}`;
       const uploadParams = {
         Bucket: bucketName,

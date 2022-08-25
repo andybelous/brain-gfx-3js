@@ -17,7 +17,7 @@ module.exports = async function getLabeledImage(req, res) {
     }
     const { account_id, event_id } = req.body;
   
-    const outputFilePath = `${account_id}/simulation/${event_id}/${event_id}_output.json`;
+    const outputFilePath = `${account_id}/simulation/${event_id}/${event_id}_disp_sim_output.json`;
     getFileFromS3(outputFilePath)
       .then((outputData) => {
         if (!outputData) {
