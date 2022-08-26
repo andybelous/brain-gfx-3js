@@ -516,7 +516,7 @@ function GetLabeledImage1(account_id,event_id){
 		} else if (!event_id) {
 		  reject("EventID is required");
 		}  
-		const outputFilePath = `${account_id}/simulation/${event_id}/${event_id}_output.json`;
+		const outputFilePath = `${account_id}/simulation/${event_id}/${event_id}_disp_sim_output.json`;
 		getFileFromS3(outputFilePath)
 		  .then((outputData) => {
 			if (!outputData) {
@@ -774,7 +774,7 @@ function GetSingleEventimage(account_id,event_id){
 		  let MPSxSR_28 = {};
 		  let MPSxSR_95 = {};
 		  let maximum_PSxSR = {};
-		  const outputFilePath = `${account_id}/simulation/${event_id}/${event_id}_output.json`;
+		  const outputFilePath = `${account_id}/simulation/${event_id}/${event_id}_disp_sim_output.json`;
 		  getFileFromS3(outputFilePath)
 			.then((outputData) => {
 			  if (!outputData) {
@@ -1275,7 +1275,13 @@ app.post("/GetLabeledImage", async function (req, res)
 			  status: 200,
 
 		  })
-	  })
+	  }).catch((err) => {
+		res.status(500).send({
+		  status: 500,
+		  error: err,
+		});
+	  });
+	  
 } );
 app.post("/GetSingleEvent", async function (req, res) {
   if (!req.body.account_id) {
@@ -1293,7 +1299,7 @@ app.post("/GetSingleEvent", async function (req, res) {
   
   const { account_id, event_id } = req.body;
 
-  GetSingleEventimage1(account_id, event_id).then((data) => {
+  GetSingleEventimage(account_id, event_id).then((data) => {
             res.send({
               status: 200,
               message: "Images uploaded successfully.",
@@ -1302,7 +1308,7 @@ app.post("/GetSingleEvent", async function (req, res) {
           .catch((err) => {
             res.status(500).send({
               status: 500,
-              error: err.message,
+              error: err,
             });
           });
 
