@@ -190,7 +190,10 @@ module.exports = function writeImage(
             <div class="grey-text">&gt;30%%</div></div>
         
             <div style="bottom: 0px;position: relative;left: 50%;transform: translate(-50%);font-size: 32px;font-weight: bold;">Strain Metric Magnitudes</div>
-        </div> 
+        </div>
+        <div id="alternative-legend" style="bottom: 25;left: 50%;transform: translate(-50%);width: fit-content;display: none;z-index: 20;position: relative;text-align: center; font-size: 47px;font-weight: bold;">
+        Alternative-legend
+        </div>
       
       </div>
       <div id="chart-container" style = "display:inline-block; width: 50%; height: 80%; margin-left: 5%;">
@@ -228,7 +231,7 @@ module.exports = function writeImage(
 
       //const browser = await puppeteer.launch();
       const page = await browser.newPage();
-      await page.setViewport({ width: 1920, height: 1080 });
+      await page.setViewport({ width: 1920, height: 937 });
       await page.setContent(html);
       // page.on('console', (log) => console[log._type](log._text));
 
@@ -260,7 +263,8 @@ module.exports = function writeImage(
             const DISPLAY_LABELS = ENABLE_LABELS;
             const ENABLE_COLOR_SPHERES = ENABLE_COLOR;
             const ENABLE_CHART = DISPLAY_CHART;
-            if (!ENABLE_CHART) {
+            if(!ENABLE_CHART)
+            {
               document.getElementById("chart-container").style.display = "none";
               document.getElementById("three-content").style.width = "100%";
             }
@@ -299,19 +303,27 @@ module.exports = function writeImage(
             const LARGE_COLOR = new THREE.Color(0xff0000);
             const X_LARGE_COLOR = new THREE.Color(0x000000);
 
-            const SMALL_GEOMETRY = new THREE.SphereGeometry(0.0015, 32, 32);
-            const MEDIUM_GEOMETRY = new THREE.SphereGeometry(0.002, 32, 32);
-            const LARGE_GEOMETRY = new THREE.SphereGeometry(0.003, 32, 32);
-            const X_LARGE_GEOMETRY = new THREE.SphereGeometry(
-              0.004,
-              32,
-              32
-            );
+            var SPHERE_SIZE_MULTIPLIER = 1;
+
+            //Scale spheres for labeled images
+            if(DISPLAY_LABELS)
+            {
+              SPHERE_SIZE_MULTIPLIER = 1.5;
+            }
+            const SMALL_GEOMETRY = new THREE.SphereGeometry(0.0015 * SPHERE_SIZE_MULTIPLIER, 32, 32);
+            const MEDIUM_GEOMETRY = new THREE.SphereGeometry(0.002 * SPHERE_SIZE_MULTIPLIER, 32, 32);
+            const LARGE_GEOMETRY = new THREE.SphereGeometry(0.003 * SPHERE_SIZE_MULTIPLIER, 32, 32);
+            const X_LARGE_GEOMETRY = new THREE.SphereGeometry(0.004 * SPHERE_SIZE_MULTIPLIER, 32, 32);
+
+
+            
 
 
 
             const amount = 2;
-            const space = 10;
+            //const space = 10;
+            //extra space between brains
+            const space = 0;
             const near = 0.1;
             const far = 100;
             const cameraAttArr = [
@@ -459,12 +471,35 @@ module.exports = function writeImage(
                     Math.ceil(height) - space
                   );
 
+                  //Changing camera viewport to bring brains closer
+                  const brain_closer_offset = 100;
+                  if( x==1 && !ENABLE_CHART)
+                  {
+                    subCamera.viewport = new THREE.Vector4(
+                      Math.floor(x * width - brain_closer_offset),
+                      Math.floor(y * height + space / 2),
+                      Math.ceil(width) - space,
+                      Math.ceil(height) - space
+                    );
+                  }
+                  if( x==0 && !ENABLE_CHART)
+                  {
+                    subCamera.viewport = new THREE.Vector4(
+                      Math.floor(x * width + brain_closer_offset),
+                      Math.floor(y * height + space / 2),
+                      Math.ceil(width) - space,
+                      Math.ceil(height) - space
+                    );
+                  }
+
                   const subCameraContainer = new THREE.Object3D();
                   subCameraContainer.add(subCamera);
 
                   subCamera.position.x = 0;
                   subCamera.position.y = 0;
-                  subCamera.position.z = 1;
+                  //subCamera.position.setZ(1);
+                  //Bring camera closer to Scale brains
+                  subCamera.position.setZ(0.9);
                   subCameraContainer.rotation.x += cameraAtt[0].rotX;
                   subCameraContainer.rotation.y += cameraAtt[0].rotY;
                   subCameraContainer.rotation.z += cameraAtt[0].rotZ;
@@ -818,6 +853,31 @@ module.exports = function writeImage(
                   "strain-metric-magnitudes"
                 ).style.display = "none";
               }
+
+              if(brainStrainActive == "MPS-95")
+              {
+                document.getElementById("strain-metric-magnitudes").style.display="none";
+                var alternative_legend = document.getElementById("alternative-legend")
+                alternative_legend.style.display = "block";
+                alternative_legend.innerHTML = "Locations of tissue above 95 Percentile Maximum Principal Strain";
+              }
+
+              if(brainStrainActive == "CSDM-15")
+              {
+                document.getElementById("strain-metric-magnitudes").style.display="none";
+                var alternative_legend = document.getElementById("alternative-legend")
+                alternative_legend.style.display = "block";
+                alternative_legend.innerHTML = "Locations of tissue above CSDM-15";
+              }
+
+              if(brainStrainActive == "CSDM-30")
+              {
+                document.getElementById("strain-metric-magnitudes").style.display="none";
+                var alternative_legend = document.getElementById("alternative-legend")
+                alternative_legend.style.display = "block";
+                alternative_legend.innerHTML = "Locations of tissue above CSDM-30";
+              }
+
               if (ENABLE_CHART) {
                 var elements = document.getElementsByClassName("dot-container");
                 for (let i = 0; i < elements.length; i++) {
@@ -866,12 +926,12 @@ module.exports = function writeImage(
               dataLabel.borderColor = "black";
               dataLabel.backgroundColor = "rgba(255,255,255,1)";
               dataLabel.padding = 4;
-              dataLabel.scale.set(0.12, 0.04, 0.1);
+              dataLabel.scale.set(0.13, 0.04, 0.1);
 
               var sphere_position = new THREE.Vector3();
               sphere.getWorldPosition(sphere_position);
 
-              dataLabel.position.set(-0.115, 0.1, 0.04)
+              dataLabel.position.set(-0.113, 0.1, 0.04)
               console.log("dataLabel.position", dataLabel.position);
               dataLabel.layers.set(1);
               dataLabel.traverse(function (child) {
@@ -923,6 +983,7 @@ module.exports = function writeImage(
         path: account_id + "_" + BRAIN_STRAIN_ACTIVE + ".png",
       });  */
       const base64 = await page.screenshot({
+        fullPage: true,
         omitBackground: true,
        encoding: 'binary'
           })
