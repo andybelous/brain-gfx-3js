@@ -60,7 +60,10 @@ module.exports = function writeImage(
     if(check_if_no_spheres(BRAIN_STRAIN_ACTIVE, summaryData))
     {
       console.log("no spheres, return no_data_image")
-        fs.readFile('./no_data_image.png', (err, no_data_image)=>{
+
+      if(BRAIN_STRAIN_ACTIVE == "CSDM-10")
+      {
+        fs.readFile('./CSDM_10_no_data_image.png', (err, no_data_image)=>{
           if (err) {
             console.error(err);
             return;
@@ -68,7 +71,50 @@ module.exports = function writeImage(
         
           resolve(no_data_image);
           return;
-      });
+        });
+      }
+      else if(BRAIN_STRAIN_ACTIVE == "CSDM-15")
+      {
+        fs.readFile('./CSDM_15_no_data_image.png', (err, no_data_image)=>{
+          if (err) {
+            console.error(err);
+            return;
+          }
+        
+          resolve(no_data_image);
+          return;
+        });
+      }
+      else if(BRAIN_STRAIN_ACTIVE == "CSDM-30")
+      {
+        fs.readFile('./CSDM_30_no_data_image.png', (err, no_data_image)=>{
+          if (err) {
+            console.error(err);
+            return;
+          }
+        
+          resolve(no_data_image);
+          return;
+        });
+      }
+      else
+      {
+
+          fs.readFile('./no_data_image.png', (err, no_data_image)=>{
+            if (err) {
+              console.error(err);
+              return;
+            }
+          
+            resolve(no_data_image);
+            return;
+        });
+      
+      }
+
+
+
+
     }
     else 
     {
@@ -860,6 +906,15 @@ module.exports = function writeImage(
                 var alternative_legend = document.getElementById("alternative-legend")
                 alternative_legend.style.display = "block";
                 alternative_legend.innerHTML = "Locations of tissue above 95 Percentile Maximum Principal Strain";
+              }
+
+
+              if(brainStrainActive == "CSDM-10")
+              {
+                document.getElementById("strain-metric-magnitudes").style.display="none";
+                var alternative_legend = document.getElementById("alternative-legend")
+                alternative_legend.style.display = "block";
+                alternative_legend.innerHTML = "Locations of tissue above CSDM-10";
               }
 
               if(brainStrainActive == "CSDM-15")
