@@ -1039,7 +1039,7 @@ module.exports = function writeImage(
       });  */
       const base64 = await page.screenshot({
         fullPage: true,
-        omitBackground: true,
+        //omitBackground: true,
        encoding: 'binary'
           })
            await browser.close();
