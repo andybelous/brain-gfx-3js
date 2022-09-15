@@ -12,7 +12,7 @@ const {uploadToS3, uploadToS3SingleImage, uploadToS3SingleLabeledImage, getFileF
 const getLabeledImage = require("./GetLabeledImage.js");
 const SensorDetailsModel = require("./models/sensors/sensorDetailsData");
 
-
+const generateBrainDetailsData = require("./generateBrainDetailsData.js");
 
 var config = require('./config/configuration_keys.json')
 
@@ -67,118 +67,152 @@ app.get("/", async (req, res) => {
 		res.send("App is running");
 	}
 });
-function getSummaryimage(accountid){
-	return new Promise((resolve, reject) => {
+function getSummaryimage(accountid, pressure_dashboard){
+	return new Promise(async (resolve, reject) => {
 		if (!accountid) {
 			reject("AccountId is required");
 		  }
-		  const summaryFilePath = `${accountid}/simulation/summary.json`;
-		  getFileFromS3(summaryFilePath)
-			.then((summaryData) => {
-			  if (!summaryData) {
-				  reject("File does not exists");
+
+
+		  try{
+
+			let simulationBCtype = "disp"
+			let url = `${accountid}/simulation/`;
+			// url += id === "625ffce0eaab772ba9b84d76" && pressure_dashboard ? 'p_summary.json' : 'disp_sim_summary.json';
+			url +=
+				pressure_dashboard === "true"
+				? "disp_pressure_sim_summary.json"
+				: "disp_strain_sim_summary.json";
+
+			console.log("URL", url)
+			let summary = await getFileFromS3(url);
+
+			
+			console.log("summarydataa", summary)
+			if (!summary) {
+		
+				let urlP = `${accountid}/simulation/`;
+				urlP +=
+				pressure_dashboard === "true"
+					? "pressure_pressure_sim_summary.json"
+					: "pressure_strain_sim_summary.json";
+				console.log("url122", url);
+				summary = await getFileFromS3(urlP);
+				console.log("summarydataa press", summary)
+				simulationBCtype = "pressure"
+				url = urlP
+			}
+
+			let minimumPS = [[], [], [], [], [], [], []];
+			let maximumPS = [[], [], [], [], [], [], []];
+			let csdm_15 = [[], [], [], [], [], [], []];
+			let csdm_5 = [[], [], [], [], [], [], []];
+			let csdm_10 = [[], [], [], [], [], [], []];
+
+
+
+			let summaryOutPut = null;
+			let brainComponentData = {
+			  csdm_10,
+			  csdm_5,
+			  csdm_15,
+			  maximumPS,
+			  minimumPS,
+			  simulationBCtype
+			};
+			if (summary && summary.Body)
+			  summaryOutPut = JSON.parse(summary.Body.toString("utf-8"));
+			if (summaryOutPut) {
+			  let brainDetailsColumn
+			  console.log("urlurl", url)
+			  if (simulationBCtype == "pressure") {
+				brainDetailsColumn =
+				  url.indexOf("pressure_pressure_sim_summary") > -1
+					? "principal-max-pressure"
+					: "principal-max-strain";
+		
+			  } else {
+				brainDetailsColumn =
+				  url.indexOf("disp_pressure_sim_summary") > -1
+					? "principal-max-pressure"
+					: "principal-max-strain";
+		
 			  }
-			  summaryData = JSON.parse(summaryData.Body.toString("utf-8"));
+		
+			  // column selections
+			  brainComponentData = await generateBrainDetailsData(
+				summaryOutPut,
+				brainDetailsColumn,
+				simulationBCtype,
+				pressure_dashboard
+			  );
+			} else {
+			  brainComponentData.simulationBCtype = "disp"
+			}
+		
 
-			  let brainRegions = {};
-			  let principal_max_strain = {};
-			  let principal_min_strain = {};
-			  let axonal_strain_max = {};
-			  let csdm_max = {};
-			  let masXsr_15_max = {};
-			  let CSDM_5 = {};
-			  let CSDM_10 = {};
-			  let CSDM_15 = {};
-			  let CSDM_30 = {};
-			  let MPS_95 = {};
-			  let MPSR_120 = {};
-			  let MPSxSR_28 = {};
-			  let MPSxSR_95 = {};
-			  let maximum_PSxSR = {};
 
-			  if (summaryData.Insults) {
-				summaryData.Insults.forEach(function (summary_data, index) {
-				  parseSummaryLocations(summary_data, 
-					principal_max_strain,
-					principal_min_strain,
-					axonal_strain_max,
-					csdm_max,
-					masXsr_15_max,
-					CSDM_5,
-					CSDM_10,
-					CSDM_15,
-					CSDM_30,
-					MPS_95,
-					MPSR_120,
-					MPSxSR_28,
-					MPSxSR_95,
-					maximum_PSxSR
-				  );
-				});
-			  }
 
-			  brainRegions["principal-max-strain"] = principal_max_strain;
-			  brainRegions["principal-min-strain"] = principal_min_strain;
-			  brainRegions["axonal-strain-max"] = axonal_strain_max;
-			  brainRegions["csdm-max"] = csdm_max;
-			  brainRegions["masXsr-15-max"] = masXsr_15_max;
 
-			  brainRegions["CSDM-5"] = CSDM_5;
-			  brainRegions["CSDM-10"] = CSDM_10;
-			  brainRegions["CSDM-15"] = CSDM_15;
-			  brainRegions["CSDM-30"] = CSDM_30;
-			  brainRegions["MPS-95"] = MPS_95;
-			  brainRegions["MPSR-120"] = MPSR_120;
-			  brainRegions["MPSxSR-28"] = MPSxSR_28;
-			  brainRegions["MPSxSR-95"] = MPSxSR_95;
-			  brainRegions["maximum-PSxSR"] = maximum_PSxSR;
+			const ENABLE_COLOR = true;
 
-			  const ENABLE_COLOR = true;
-			  writeImage(
-				brainRegions,
-				accountid,
-				"principal-max-strain",
-				ENABLE_COLOR
-			  )
-				.then((data) => {
-				  return uploadToS3(accountid, "principal-max-strain.png",data);
-				})
-				.then((data) => {
+
+			writeImage(
+				brainComponentData,
+			  accountid,
+			  "principal-max-strain",
+			  ENABLE_COLOR
+			)
+			  .then((data) => {
+				return uploadToS3(accountid, "principal-max-strain.png",data);
+			  })
+			  .then((data) => {
 				  return writeImage(
-					brainRegions,
+					brainComponentData,
 					accountid,
-					"CSDM-5",
+					"principal-min-strain",
 					ENABLE_COLOR
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "CSDM-5.png",data);
+				  return uploadToS3(accountid, "principal-min-strain.png",data);
 				})
-				.then((data) => {
+			  .then((data) => {
+				return writeImage(
+					brainComponentData,
+				  accountid,
+				  "CSDM-5",
+				  ENABLE_COLOR
+				);
+			  })
+			  .then((data) => {
+				return uploadToS3(accountid, "CSDM-5.png",data);
+			  })
+			  .then((data) => {
+				return writeImage(
+					brainComponentData,
+				  accountid,
+				  "CSDM-10",
+				  ENABLE_COLOR
+				);
+			  })
+			  .then((data) => {
+				return uploadToS3(accountid, "CSDM-10.png",data);
+			  })
+			  .then((data) => {
+				return writeImage(
+					brainComponentData,
+				  accountid,
+				  "CSDM-15",
+				  ENABLE_COLOR
+				);
+			  })
+			  .then((data) => {
+				return uploadToS3(accountid, "CSDM-15.png",data);
+			  })
+			  	.then((data) => {
 				  return writeImage(
-					brainRegions,
-					accountid,
-					"CSDM-10",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3(accountid, "CSDM-10.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"CSDM-15",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3(accountid, "CSDM-15.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
+					brainComponentData,
 					accountid,
 					"CSDM-30",
 					ENABLE_COLOR
@@ -189,7 +223,7 @@ function getSummaryimage(accountid){
 				})
 				.then((data) => {
 				  return writeImage(
-					brainRegions,
+					brainComponentData,
 					accountid,
 					"MPS-95",
 					ENABLE_COLOR
@@ -200,7 +234,7 @@ function getSummaryimage(accountid){
 				})
 				.then((data) => {
 				  return writeImage(
-					brainRegions,
+					brainComponentData,
 					accountid,
 					"MPSR-120",
 					ENABLE_COLOR
@@ -211,7 +245,7 @@ function getSummaryimage(accountid){
 				})
 				.then((data) => {
 				  return writeImage(
-					brainRegions,
+					brainComponentData,
 					accountid,
 					"MPSxSR-28",
 					ENABLE_COLOR
@@ -222,7 +256,7 @@ function getSummaryimage(accountid){
 				})
 				.then((data) => {
 				  return writeImage(
-					brainRegions,
+					brainComponentData,
 					accountid,
 					"MPSxSR-95",
 					ENABLE_COLOR
@@ -233,7 +267,7 @@ function getSummaryimage(accountid){
 				})
 				.then((data) => {
 				  return writeImage(
-					brainRegions,
+					brainComponentData,
 					accountid,
 					"axonal-strain-max",
 					ENABLE_COLOR
@@ -244,7 +278,7 @@ function getSummaryimage(accountid){
 				})
 				.then((data) => {
 				  return writeImage(
-					brainRegions,
+					brainComponentData,
 					accountid,
 					"masXsr-15-max",
 					ENABLE_COLOR
@@ -255,7 +289,7 @@ function getSummaryimage(accountid){
 				})
 				.then((data) => {
 				  return writeImage(
-					brainRegions,
+					brainComponentData,
 					accountid,
 					"maximum-PSxSR",
 					ENABLE_COLOR
@@ -263,28 +297,20 @@ function getSummaryimage(accountid){
 				})
 				.then((data) => {
 				  return uploadToS3(accountid, "maximum-PSxSR.png",data);
-				})
-				.then((data) => {
-				  return writeImage(
-					brainRegions,
-					accountid,
-					"principal-min-strain",
-					ENABLE_COLOR
-				  );
-				})
-				.then((data) => {
-				  return uploadToS3(accountid, "principal-min-strain.png",data);
-				})
-				.then((data) => {
+				})	  
+			  .then((data) => {
 				  resolve("Images uploaded successfully.");
-				})
-				.catch((err) => {
-					reject(err.message);
-				});
-			})
-			.catch((err) => {
-			  reject(err.message);
-			});
+				}).catch((err) => {
+				reject(err.message);
+			  });
+			
+			
+
+			} catch (err) {
+				console.log("Error", err)
+				reject(err);
+			}
+
 	 });
 }
 
@@ -1238,9 +1264,9 @@ app.post("/getSummary", function (req, res) {
       error: "AccountId is required",
     });
   	}
-	  const { account_id} = req.body;
+	  const { account_id, pressure_dashboard} = req.body;
         
-        getSummaryimage(account_id).then((data) => {
+        getSummaryimage(account_id, pressure_dashboard).then((data) => {
           res.send({
             status: 200,
             message: "Images uploaded successfully.",
@@ -1249,7 +1275,7 @@ app.post("/getSummary", function (req, res) {
         .catch((err) => {
           res.status(500).send({
             status: 500,
-            error: err.message,
+            error: err,
           });
         });
 });
