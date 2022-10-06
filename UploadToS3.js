@@ -14,10 +14,10 @@ const s3 = new AWS.S3({
 var s3_without_acceleration = new AWS.S3()
 
   
-function uploadToS3(account_id, file,data) {
+function uploadToS3PlayerImages(account_id, file,data, pressure_dashboard = false) {
     return new Promise((resolve, reject) => {
       const fileContent =  data;//fs.readFileSync(`./${account_id}_${file}`);
-      const path = `${account_id}/simulation/SummaryBrainImages/${file}`;
+      const path = pressure_dashboard? `${account_id}/simulation/PressureSummaryBrainImages/${file}` : `${account_id}/simulation/SummaryBrainImages/${file}`;
       const uploadParams = {
         Bucket: bucketName,
         Key: path,
@@ -139,7 +139,7 @@ function uploadToS3(account_id, file,data) {
     });
   }
 
-  exports.uploadToS3 = uploadToS3;
+  exports.uploadToS3PlayerImages = uploadToS3PlayerImages;
   exports.uploadToS3SingleImage = uploadToS3SingleImage;
   exports.uploadToS3SingleLabeledImage = uploadToS3SingleLabeledImage;
   exports.getFileFromS3 = getFileFromS3;

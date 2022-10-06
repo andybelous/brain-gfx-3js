@@ -8,7 +8,7 @@ const port = 3000;
 const writeImage = require("./writeImage.js");
 const parseSummaryLocations = require("./parseSummaryLocations.js");
 const parseArrayData = require("./parseArrayData.js")
-const {uploadToS3, uploadToS3SingleImage, uploadToS3SingleLabeledImage, getFileFromS3, uploadToS3TeamImages, getTeamFileFromS3} = require("./UploadToS3.js");
+const {uploadToS3PlayerImages, uploadToS3SingleImage, uploadToS3SingleLabeledImage, getFileFromS3, uploadToS3TeamImages, getTeamFileFromS3} = require("./UploadToS3.js");
 const getLabeledImage = require("./GetLabeledImage.js");
 const SensorDetailsModel = require("./models/sensors/sensorDetailsData");
 
@@ -155,6 +155,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 
 
 			const ENABLE_COLOR = true;
+			const is_pressure_dashboard = pressure_dashboard === "true";
 
 
 			writeImage(
@@ -164,7 +165,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 			  ENABLE_COLOR
 			)
 			  .then((data) => {
-				return uploadToS3(accountid, "principal-max-strain.png",data);
+				return uploadToS3PlayerImages(accountid, "principal-max-strain.png",data, is_pressure_dashboard);
 			  })
 			  .then((data) => {
 				  return writeImage(
@@ -175,7 +176,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "principal-min-strain.png",data);
+				  return uploadToS3PlayerImages(accountid, "principal-min-strain.png",data, is_pressure_dashboard);
 				})
 			  .then((data) => {
 				return writeImage(
@@ -186,7 +187,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				);
 			  })
 			  .then((data) => {
-				return uploadToS3(accountid, "CSDM-5.png",data);
+				return uploadToS3PlayerImages(accountid, "CSDM-5.png",data, is_pressure_dashboard);
 			  })
 			  .then((data) => {
 				return writeImage(
@@ -197,7 +198,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				);
 			  })
 			  .then((data) => {
-				return uploadToS3(accountid, "CSDM-10.png",data);
+				return uploadToS3PlayerImages(accountid, "CSDM-10.png",data, is_pressure_dashboard);
 			  })
 			  .then((data) => {
 				return writeImage(
@@ -208,7 +209,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				);
 			  })
 			  .then((data) => {
-				return uploadToS3(accountid, "CSDM-15.png",data);
+				return uploadToS3PlayerImages(accountid, "CSDM-15.png",data, is_pressure_dashboard);
 			  })
 			  	.then((data) => {
 				  return writeImage(
@@ -219,7 +220,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "CSDM-30.png",data);
+				  return uploadToS3PlayerImages(accountid, "CSDM-30.png",data, is_pressure_dashboard);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -230,7 +231,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "MPS-95.png",data);
+				  return uploadToS3PlayerImages(accountid, "MPS-95.png",data, is_pressure_dashboard);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -241,7 +242,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "MPSR-120.png",data);
+				  return uploadToS3PlayerImages(accountid, "MPSR-120.png",data, is_pressure_dashboard);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -252,7 +253,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "MPSxSR-28.png",data);
+				  return uploadToS3PlayerImages(accountid, "MPSxSR-28.png",data, is_pressure_dashboard);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -263,7 +264,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "MPSxSR-95.png",data);
+				  return uploadToS3PlayerImages(accountid, "MPSxSR-95.png",data, is_pressure_dashboard);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -274,7 +275,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "axonal-strain-max.png",data);
+				  return uploadToS3PlayerImages(accountid, "axonal-strain-max.png",data, is_pressure_dashboard);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -285,7 +286,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "masXsr-15-max.png",data);
+				  return uploadToS3PlayerImages(accountid, "masXsr-15-max.png",data, is_pressure_dashboard);
 				})
 				.then((data) => {
 				  return writeImage(
@@ -296,7 +297,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3(accountid, "maximum-PSxSR.png",data);
+				  return uploadToS3PlayerImages(accountid, "maximum-PSxSR.png",data, is_pressure_dashboard);
 				})	  
 			  .then((data) => {
 				  resolve("Images uploaded successfully.");
@@ -330,60 +331,42 @@ function getTeamSummaryimage(team_id, teamSummary){
 			  //console.log("summaryJson", teamSummary)
 			  //summaryData = JSON.parse(summaryJson.toString("utf-8"));
 			  
-			  const summaryData = teamSummary;
+			  let brainRegions = {
+				"principal-max-strain": {},
+				"principal-min-strain": {},
+				"CSDM-5": {},
+				"CSDM-10": {},
+				"CSDM-15": {},
+				"CSDM-30": {},
+				"MPS-95": {},
+				"MPSR-120": {},
+				"MPSxSR-28": {},
+				"MPSxSR-95": {},
+				"maximum-PSxSR": {}
+			};
 
-			  let brainRegions = {};
-			  let principal_max_strain = {};
-			  let principal_min_strain = {};
-			  let axonal_strain_max = {};
-			  let csdm_max = {};
-			  let masXsr_15_max = {};
-			  let CSDM_5 = {};
-			  let CSDM_10 = {};
-			  let CSDM_15 = {};
-			  let CSDM_30 = {};
-			  let MPS_95 = {};
-			  let MPSR_120 = {};
-			  let MPSxSR_28 = {};
-			  let MPSxSR_95 = {};
-			  let maximum_PSxSR = {};
+			teamSummary.forEach(async (record)=>
+			{
 
-			  if (summaryData.Insults) {
-				summaryData.Insults.forEach(function (summary_data, index) {
-				  parseSummaryLocations(summary_data, 
-					principal_max_strain,
-					principal_min_strain,
-					axonal_strain_max,
-					csdm_max,
-					masXsr_15_max,
-					CSDM_5,
-					CSDM_10,
-					CSDM_15,
-					CSDM_30,
-					MPS_95,
-					MPSR_120,
-					MPSxSR_28,
-					MPSxSR_95,
-					maximum_PSxSR
+	
+				  // column selections
+				  let brainComponentData = await generateBrainDetailsData(
+					record,
+					"principal-max-strain",
+					simulationBCtype,
+					pressure_dashboard
 				  );
-				});
-			  }
 
-			  brainRegions["principal-max-strain"] = principal_max_strain;
-			  brainRegions["principal-min-strain"] = principal_min_strain;
-			  brainRegions["axonal-strain-max"] = axonal_strain_max;
-			  brainRegions["csdm-max"] = csdm_max;
-			  brainRegions["masXsr-15-max"] = masXsr_15_max;
+				  var keys = Object.keys(brainRegions);
+				  keys.forEach((key)=>
+				  {
+					brainRegions[key].push(brainComponentData[key])
+				  })
+				
 
-			  brainRegions["CSDM-5"] = CSDM_5;
-			  brainRegions["CSDM-10"] = CSDM_10;
-			  brainRegions["CSDM-15"] = CSDM_15;
-			  brainRegions["CSDM-30"] = CSDM_30;
-			  brainRegions["MPS-95"] = MPS_95;
-			  brainRegions["MPSR-120"] = MPSR_120;
-			  brainRegions["MPSxSR-28"] = MPSxSR_28;
-			  brainRegions["MPSxSR-95"] = MPSxSR_95;
-			  brainRegions["maximum-PSxSR"] = maximum_PSxSR;
+
+			})
+
 
 			  const ENABLE_COLOR = true;
 			  writeImage(
@@ -1161,7 +1144,7 @@ async function getStatsSummaryData (team_id) {
                 //console.log('player', player.doc)
                 let playerData = player.doc.users[0];
                 if (!playerData || playerData.team_status !== 1) return null;
-                let url = `${player.doc.account_id}/simulation/summary.json`;
+                let url = `${player.doc.account_id}/simulation/disp_strain_sim_summary.json`;
                 // let summary = await getFileFromS3(url);
                 return getTeamFileFromS3(url)
                     .then((summary) => {
@@ -1214,24 +1197,14 @@ app.post("/getTeamSummary", function (req, res) {
 		
 			console.log("getStatsSummaryData Success", team_data)
 
-			// Team summary aggregation
-			const newSummary = {
-				Insults: [],
-			};
+			
 
-			team_data.forEach((record)=>
-			{
-				record.Insults.forEach((insult =>
-					{
-						newSummary.Insults.push(insult);
-					}
-					))
-			})
+
 
 			//console.log("newSummary", newSummary)
 
 
-			getTeamSummaryimage(team_id, newSummary).then((data) => {
+			getTeamSummaryimage(team_id, team_data).then((data) => {
 				res.send({
 				  status: 200,
 				  message: "Images uploaded successfully.",
