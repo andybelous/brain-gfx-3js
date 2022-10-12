@@ -316,7 +316,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 }
 
 
-function getTeamSummaryimage(team_id, teamSummary){
+function getTeamSummaryimage(team_id, teamSummary, pressure_dashboard){
 	return new Promise(async (resolve, reject) => {
 		if (!team_id) {
 			reject("team_id is required");
@@ -328,55 +328,92 @@ function getTeamSummaryimage(team_id, teamSummary){
 			  if (!teamSummary) {
 				  reject("File does not exists");
 			  }
-			  //console.log("summaryJson", teamSummary)
-			  //summaryData = JSON.parse(summaryJson.toString("utf-8"));
-			  
-			  let brainRegions = {
-				"principal-max-strain": {},
-				"principal-min-strain": {},
-				"CSDM-5": {},
-				"CSDM-10": {},
-				"CSDM-15": {},
-				"CSDM-30": {},
-				"MPS-95": {},
-				"MPSR-120": {},
-				"MPSxSR-28": {},
-				"MPSxSR-95": {},
-				"maximum-PSxSR": {}
-			};
+			
+			
+				let simulationBCtype = "disp"
+				let url = `/team/${team_id}/`;
+				// url += id === "625ffce0eaab772ba9b84d76" && pressure_dashboard ? 'p_summary.json' : 'disp_sim_summary.json';
+				url +=
+					pressure_dashboard === "true"
+					? "disp_pressure_sim_summary.json"
+					: "disp_strain_sim_summary.json";
 
-			teamSummary.forEach(async (record)=>
-			{
+				console.log("URL", url)
+				let summary;
 
-	
-				  // column selections
-				  let brainComponentData = await generateBrainDetailsData(
-					record,
-					"principal-max-strain",
-					simulationBCtype,
-					pressure_dashboard
-				  );
+				try{
 
-				  var keys = Object.keys(brainRegions);
-				  keys.forEach((key)=>
-				  {
-					brainRegions[key].push(brainComponentData[key])
-				  })
+					summary = await getFileFromS3(url);
+
+					if (!summary) {
 				
+						let urlP = `/team/${team_id}/`;
+						urlP +=
+						pressure_dashboard === "true"
+							? "pressure_pressure_sim_summary.json"
+							: "pressure_strain_sim_summary.json";
+						console.log("url122", url);
+						summary = await getFileFromS3(urlP);
+						simulationBCtype = "pressure"
+						url = urlP
+					}
+			}
+			catch(err)
+			{
+				reject("no summary file found", err);
+			}
+
+			
 
 
-			})
+
+			let summaryOutPut = null;
+			let brainComponentData = null;
+			if (summary && summary.Body)
+			  summaryOutPut = JSON.parse(summary.Body.toString("utf-8"));
+			if (summaryOutPut) {
+			  let brainDetailsColumn
+			  console.log("urlurl", url)
+			  if (simulationBCtype == "pressure") {
+				brainDetailsColumn =
+				  url.indexOf("pressure_pressure_sim_summary") > -1
+					? "principal-max-pressure"
+					: "principal-max-strain";
+		
+			  } else {
+				brainDetailsColumn =
+				  url.indexOf("disp_pressure_sim_summary") > -1
+					? "principal-max-pressure"
+					: "principal-max-strain";
+		
+			  }
+		
+			  // column selections
+			  brainComponentData = await generateBrainDetailsData(
+				summaryOutPut,
+				brainDetailsColumn,
+				simulationBCtype,
+				pressure_dashboard
+			  );
+			} else {
+			  brainComponentData.simulationBCtype = "disp"
+			}
+		
+
+
+
+			const is_pressure_dashboard = pressure_dashboard === "true";
 
 
 			  const ENABLE_COLOR = true;
 			  writeImage(
-				brainRegions,
+				brainComponentData,
 				accountid,
 				"principal-max-strain",
 				ENABLE_COLOR
 			  )
 				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "principal-max-strain.png",data);
+				  return uploadToS3TeamImages(team_id, "principal-max-strain.png",data, is_pressure_dashboard);
 				})
 				// .then((data) => {
 				//   return writeImage(
@@ -402,14 +439,14 @@ function getTeamSummaryimage(team_id, teamSummary){
 				// })
 				.then((data) => {
 				  return writeImage(
-					brainRegions,
+					brainComponentData,
 					accountid,
 					"CSDM-15",
 					ENABLE_COLOR
 				  );
 				})
 				.then((data) => {
-				  return uploadToS3TeamImages(team_id, "CSDM-15.png",data);
+				  return uploadToS3TeamImages(team_id, "CSDM-15.png",data, is_pressure_dashboard);
 				})
 				// .then((data) => {
 				//   return writeImage(
@@ -1187,7 +1224,7 @@ app.post("/getTeamSummary", function (req, res) {
 		error: "team_id is required",
 	  });
 		}
-		const { team_id } = req.body;
+		const { team_id, pressure_dashboard } = req.body;
 
 
 
@@ -1204,7 +1241,7 @@ app.post("/getTeamSummary", function (req, res) {
 			//console.log("newSummary", newSummary)
 
 
-			getTeamSummaryimage(team_id, team_data).then((data) => {
+			getTeamSummaryimage(team_id, team_data, pressure_dashboard).then((data) => {
 				res.send({
 				  status: 200,
 				  message: "Images uploaded successfully.",
@@ -1215,6 +1252,7 @@ app.post("/getTeamSummary", function (req, res) {
 				  status: 500,
 				  error: err.message,
 				});
+
 			  });
 			
 

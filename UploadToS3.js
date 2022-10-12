@@ -36,10 +36,10 @@ function uploadToS3PlayerImages(account_id, file,data, pressure_dashboard = fals
   }
 
 
-  function uploadToS3TeamImages(team_id, file,data) {
+  function uploadToS3TeamImages(team_id, file,data, pressure_dashboard = false) {
     return new Promise((resolve, reject) => {
       const fileContent = data;//fs.readFileSync(`./${account_id}_${file}`);
-      const path = `/team/${team_id}/simulation/SummaryBrainImages/${file}`;
+      const path = pressure_dashboard? `/team/${team_id}/simulation/PressureSummaryBrainImages/${file}` : `/team/${team_id}/simulation/SummaryBrainImages/${file}`;
       const uploadParams = {
         Bucket: bucketName,
         Key: path,

@@ -670,7 +670,7 @@ module.exports = function writeImage(
             }
 
             function showUpdatedRegion() {
-              console.log("brainRegions", brainStrainActive);
+              //console.log("brainRegions", brainStrainActive);
               frontal_lobe_json = brainRegions[brainStrainActive]
                 ? brainRegions[brainStrainActive].frontal || []
                 : [];
@@ -693,7 +693,7 @@ module.exports = function writeImage(
                 ? brainRegions[brainStrainActive].stem || []
                 : [];
               //csf_json = this.props.brainRegions[brainStrainActive].csf || []
-              console.log("frontal_lobe_json", pariental_lobe_json);
+              //console.log("frontal_lobe_json", pariental_lobe_json);
               all_spheres_json = [];
               all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
               all_spheres_json = all_spheres_json.concat(cerebellum_lobe_json);
