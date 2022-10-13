@@ -8,7 +8,8 @@ module.exports = function writeImage(
   BRAIN_STRAIN_ACTIVE,
   ENABLE_COLOR,
   DISPLAY_CHART = true,
-  ENABLE_LABELS = false
+  ENABLE_LABELS = false,
+  PRESSURE_DASHBOARD = false
 ) {
   return new Promise((resolve, reject) => {
     //const SAMPLE_DATA = fs.readFileSync('./data.json', {encoding:'utf8', flag:'r'});
@@ -22,26 +23,27 @@ module.exports = function writeImage(
     function check_if_no_spheres (brainStrainActive, brainRegions)
     {
       var frontal_lobe_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].frontal || []
-        : [];
-      var cerebellum_lobe_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].cerebellum || []
-        : [];
-      var occipital_lobe_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].occipital || []
-        : [];
-      var pariental_lobe_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].parietal || []
-        : [];
-      var temporal_lobe_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].temporal || []
-        : [];
-      var middle_part_of_the_brain_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].msc || []
-        : [];
-      var stem_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].stem || []
-        : [];
+      ? brainRegions[brainStrainActive].frontal || []
+      : [];
+    var cerebellum_lobe_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].cerebellum || []
+      : [];
+    var occipital_lobe_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].occipital || []
+      : [];
+    var pariental_lobe_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].parietal || []
+      : [];
+    var temporal_lobe_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].temporal || []
+      : [];
+    var middle_part_of_the_brain_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].msc || []
+      : [];
+    var stem_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].stem || []
+      : [];
+
       //csf_json = this.props.brainRegions[brainStrainActive].csf || []
       var all_spheres_json = [];
       all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
@@ -303,6 +305,7 @@ module.exports = function writeImage(
           ENABLE_COLOR,
           DISPLAY_CHART,
           ENABLE_LABELS,
+          PRESSURE_DASHBOARD
         }) => {
           return await new Promise((resolve) => {
             var spheres_array = [];
@@ -340,9 +343,15 @@ module.exports = function writeImage(
             const highlightEmissiveIntensity = 0.6;
 
 
-            const SMALL_BOUNDARY = 0.1;
-            const MEDIUM_BOUNDARY = 0.18;
-            const LARGE_BOUNDARY = 0.3;
+            // Strain dashboard boundaries
+            const SMALL_BOUNDARY = 10;
+            const MEDIUM_BOUNDARY = 18;
+            const LARGE_BOUNDARY = 30;
+
+            // Pressure dashboard boundaries kPa
+            const PRESSURE_SMALL_BOUNDARY = 20;
+            const PRESSURE_MEDIUM_BOUNDARY = 60;
+            const PRESSURE_LARGE_BOUNDARY = 100;
 
             const SMALL_COLOR = new THREE.Color(0x00b050);
             const MEDIUM_COLOR = new THREE.Color(0xed7d31);
@@ -661,7 +670,7 @@ module.exports = function writeImage(
             }
 
             function showUpdatedRegion() {
-              console.log("brainRegions", brainStrainActive);
+              //console.log("brainRegions", brainStrainActive);
               frontal_lobe_json = brainRegions[brainStrainActive]
                 ? brainRegions[brainStrainActive].frontal || []
                 : [];
@@ -684,7 +693,7 @@ module.exports = function writeImage(
                 ? brainRegions[brainStrainActive].stem || []
                 : [];
               //csf_json = this.props.brainRegions[brainStrainActive].csf || []
-              console.log("frontal_lobe_json", pariental_lobe_json);
+              //console.log("frontal_lobe_json", pariental_lobe_json);
               all_spheres_json = [];
               all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
               all_spheres_json = all_spheres_json.concat(cerebellum_lobe_json);
@@ -740,19 +749,40 @@ module.exports = function writeImage(
                   sphere_material = sphereMat.clone();
                   //sphere_geometry = sphereGeo.clone();
 
-                  if (value <= SMALL_BOUNDARY) {
-                    sphere_material.color = SMALL_COLOR;
-                    sphere_geometry = SMALL_GEOMETRY;
-                  } else if (value <= MEDIUM_BOUNDARY) {
-                    sphere_material.color = MEDIUM_COLOR;
-                    sphere_geometry = MEDIUM_GEOMETRY;
-                  } else if (value <= LARGE_BOUNDARY) {
-                    sphere_material.color = LARGE_COLOR;
-                    sphere_geometry = LARGE_GEOMETRY;
-                  } else if (value > LARGE_BOUNDARY) {
-                    sphere_material.color = X_LARGE_COLOR;
-                    sphere_geometry = X_LARGE_GEOMETRY;
+                  if(!PRESSURE_DASHBOARD)
+                  {
+                    if (value <= SMALL_BOUNDARY) {
+                      sphere_material.color = SMALL_COLOR;
+                      sphere_geometry = SMALL_GEOMETRY;
+                    } else if (value <= MEDIUM_BOUNDARY) {
+                      sphere_material.color = MEDIUM_COLOR;
+                      sphere_geometry = MEDIUM_GEOMETRY;
+                    } else if (value <= LARGE_BOUNDARY) {
+                      sphere_material.color = LARGE_COLOR;
+                      sphere_geometry = LARGE_GEOMETRY;
+                    } else if (value > LARGE_BOUNDARY) {
+                      sphere_material.color = X_LARGE_COLOR;
+                      sphere_geometry = X_LARGE_GEOMETRY;
+                    }
                   }
+                  else if(PRESSURE_DASHBOARD)
+                  {
+                    if (value <= PRESSURE_SMALL_BOUNDARY) {
+                      sphere_material.color = SMALL_COLOR;
+                      sphere_geometry = SMALL_GEOMETRY;
+                    } else if (value <= PRESSURE_MEDIUM_BOUNDARY) {
+                      sphere_material.color = MEDIUM_COLOR;
+                      sphere_geometry = MEDIUM_GEOMETRY;
+                    } else if (value <= PRESSURE_LARGE_BOUNDARY) {
+                      sphere_material.color = LARGE_COLOR;
+                      sphere_geometry = LARGE_GEOMETRY;
+                    } else if (value > PRESSURE_LARGE_BOUNDARY) {
+                      sphere_material.color = X_LARGE_COLOR;
+                      sphere_geometry = X_LARGE_GEOMETRY;
+                    }
+                  }
+
+                  
                 }
                 const sphere = new THREE.Mesh(sphere_geometry, sphere_material);
                 const pointerPos = new THREE.Vector3(x, y, z);
