@@ -6,16 +6,17 @@ const app = express();
 
 const port = 3000;
 const writeImage = require("./writeImage.js");
+const writeRankedMpsChart = require("./writeRankedMpsChart.js");
+const writeMpsVsTimePlotImage = require("./writeMpsVsTimePlotImage.js")
 const parseSummaryLocations = require("./parseSummaryLocations.js");
 const parseArrayData = require("./parseArrayData.js")
-const {uploadToS3PlayerImages, uploadToS3SingleImage, uploadToS3SingleLabeledImage, getFileFromS3, uploadToS3TeamImages, getTeamFileFromS3} = require("./UploadToS3.js");
+const {uploadToS3PlayerImages, uploadToS3SingleImage, uploadToS3SingleLabeledImage, uploadToS3PlotImage, getFileFromS3, uploadToS3TeamImages, getTeamFileFromS3} = require("./UploadToS3.js");
 const getLabeledImage = require("./GetLabeledImage.js");
 const SensorDetailsModel = require("./models/sensors/sensorDetailsData");
 
 const generateBrainDetailsData = require("./generateBrainDetailsData.js");
 
 var config = require('./config/configuration_keys.json')
-
 
 // Mongo connect
 var MONGODB_URL = config.MONGODB_URL;
@@ -1355,7 +1356,177 @@ app.post("/GetSingleEvent", async function (req, res) {
 
 });
 
+
+app.post("/GetPlotImage", async function (req, res) {
+	if (!req.body.account_id) {
+	  return res.status(500).send({
+		status: 500,
+		error: "AccountId is required",
+	  });
+	} else if (!req.body.event_id) {
+	  return res.status(500).send({
+		status: 500,
+		error: "EventID is required",
+	  });
+	}
+	
+	
+	const { account_id, event_id } = req.body;
+  
+	GetPlotImage(account_id, event_id).then((data) => {
+			  res.send({
+				status: 200,
+				message: "Plot Images uploaded successfully.",
+			  });
+			})
+			.catch((err) => {
+			  res.status(500).send({
+				status: 500,
+				error: err,
+			  });
+			});
+  
+  });
+
+
+  function GetPlotImage(account_id,event_id){
+	return new Promise(async (resolve, reject) => {    
+		 if (!account_id) {
+			 reject("AccountId is required");
+		  } else if (!event_id) {
+			 reject("EventID is required");
+		  }
+
+
+		  var rankedmpschart_data;
+		try{
+		  rankedmpschart_data = await getSimulationOfEvent(account_id, event_id);
+		}
+		catch (error)
+		{
+			reject(error);
+		}
+
+
+		var mpsVsTimeChart_data = [];
+		try{
+			mpsVsTimeChart_data = await getMpsVsTimePlotData(account_id, event_id);
+		}
+		catch (error)
+		{
+			console.log("error:", error)
+			//reject(error);
+		}
+
+		let data = JSON.stringify(mpsVsTimeChart_data);
+
+
+		writeRankedMpsChart(rankedmpschart_data)
+		.then((data) => {
+		  return uploadToS3PlotImage(
+			account_id,
+			event_id,
+			`RankedMPS.png`,
+			data
+		  );
+		}).then((data) => {
+			return writeMpsVsTimePlotImage(
+			  mpsVsTimeChart_data
+			);
+		  }).then((data) => {
+			return uploadToS3PlotImage(
+			  account_id,
+			  event_id,
+			  `MpsVsTime.png`,
+			  data
+			);
+		  }).then((data)=>
+			{
+				resolve("Plot images uploaded correctly")
+			}).catch((err) => {
+				reject(err.message);
+			});
+
+
+
+	})
+}
+
+	const getMpsVsTimePlotData = (account_id, event_id) => {
+
+		return new Promise(async (resolve, reject)=>
+		{
+			try {
+			const event_key = `${account_id}/simulation/${event_id}/timetraces/MPS95.json`;
+			const file_response = await getFileFromS3(event_key);
+			const file_body =
+				file_response?.Body && typeof file_response?.Body !== "undefined"
+				? file_response["Body"]
+				: null;
+			let file_parse_body = file_body ? JSON.parse(file_body) : {};
+			const file_parse_body_keys = Object.keys(file_parse_body);
+			if (
+				file_parse_body_keys.length > 0 &&
+				file_parse_body_keys.indexOf("MPS95") > -1 &&
+				file_parse_body["MPS95"] &&
+				Array.isArray(file_parse_body["MPS95"])
+			) {
+				file_parse_body = file_parse_body["MPS95"].map((el, index) => {
+				return {
+					x: file_parse_body["time"][index] * 1000,
+					y: file_parse_body["MPS95"][index] * 100,
+				};
+				});
+			} else {
+				file_parse_body = [];
+			}
+			resolve(file_parse_body);
+			} catch (err) {
+				console.log("Error", err)
+			reject(err);
+			}
+
+	});
+
+  };
+
+  const getSimulationOfEvent = (account_id, event_id) => {
+	return new Promise(async (resolve, reject)=>
+	{
+
+		try {
+
+		let url = `${account_id}/simulation/${event_id}/MPSfile.dat`;
+		let mps_dat_output = await getFileFromS3(url);
+		let msp_dat_data = [];
+		if (mps_dat_output) {
+			var enc = new TextDecoder("utf-8");
+			var arr = new Uint8Array(mps_dat_output.Body);
+			var objdata = enc.decode(arr);
+			mpsRankedDataObj = objdata.split("\n");
+			for (var i = 0; i < mpsRankedDataObj.length; i++) {
+			let mpsval = mpsRankedDataObj[i].split(",");
+			let val = parseFloat(mpsval[1]);
+			msp_dat_data.push({ id: mpsval[0], val: val });
+			}
+
+			resolve(msp_dat_data);
+		}
+		
+
+		} catch (err) {
+		reject(err);
+		}
+	
+	})
+  };
+  
+  
+
+
+
 /* app.listen(process.env.PORT || port, function (err) {
+
   console.log(`Server is listening at http://localhost:${port}`);
 });  */
 module.exports.handler = serverless(app);
