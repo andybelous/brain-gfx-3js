@@ -1356,6 +1356,7 @@ app.post("/GetSingleEvent", async function (req, res) {
 
 });
 
+
 app.post("/GetPlotImage", async function (req, res) {
 	if (!req.body.account_id) {
 	  return res.status(500).send({
@@ -1522,9 +1523,12 @@ app.post("/GetPlotImage", async function (req, res) {
   
   
 
-app.listen(process.env.PORT || port, function (err) {
+
+
+/* app.listen(process.env.PORT || port, function (err) {
+
   console.log(`Server is listening at http://localhost:${port}`);
-}); 
+});  */
 module.exports.handler = serverless(app);
 
 
