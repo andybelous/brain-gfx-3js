@@ -1,5 +1,8 @@
 const chromium = require("chrome-aws-lambda");
 const fs = require('fs');
+const {
+  performance
+} = require('perf_hooks');
 
 
 module.exports = function writeImage(
@@ -255,20 +258,15 @@ module.exports = function writeImage(
     </html>`;
 
     async function executeScript () {
-      var args = chromium.args;
-      
-      args.push("--disable-web-security");
-      // args = args.filter(arg => arg !== '--headless');
-      // Lanch pupeteer with custom arguments
-      
-	  // console.log("test 1",args);
-/*	const browser = await chromium.puppeteer.launch({
-        headless: true,
-        ignoreDefaultArgs: true,
-        args,
-      }); */
+
+  
+      const minimal_args = [
+        "--enable-webgl",
+        "--disable-web-security",
+        "--use-cmd-decoder=passthrough"
+      ];
      const   browser = await chromium.puppeteer.launch({
-      args: chromium.args,
+      args: minimal_args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath,
       headless: chromium.headless,
@@ -617,7 +615,6 @@ module.exports = function writeImage(
 
                   sphereContainer = new THREE.Object3D();
                   root.add(sphereContainer);
-                  showUpdatedRegion();
 
                   root.position.x -= boxCenter.x;
                   root.position.y -= boxCenter.y;
@@ -654,15 +651,20 @@ module.exports = function writeImage(
                   brainModel.rotation.x = Math.PI / 2;
                   brainModel.rotation.y = Math.PI;
                   brainModel.rotation.z = Math.PI;
-
+ 
                   scene.add(brainModel);
+                  showUpdatedRegion();
                   if (
                     DISPLAY_LABELS &&
                     brainStrainActive == "principal-max-strain"
                   ) {
                     makeLabel();
                   }
+                  let startTime = performance.now()
                   renderer.render(scene, camera);
+                  let endTime = performance.now()
+                  let time = endTime-startTime;
+                  console.log(`frame rendering took ${time} milliseconds.`);
                   resolve(true);
                 },
                 (error) => console.log(error)
@@ -708,16 +710,18 @@ module.exports = function writeImage(
 
               showAllSpheres();
               setUpChart();
+
             }
 
             function showAllSpheres() {
               // console.log('showing allshpere')
-              // console.log('showAllSpheres------------------------\n',all_spheres_json)
+              //console.log('showAllSpheres------------------------\n',all_spheres_json)
               if (all_spheres_json.length == 0) {
                 document.getElementById("blur-container").style.filter =
                   "blur(3px)";
                 document.getElementById("no-spheres-text").style.display =
                   "block";
+                  return;
               }
               all_spheres_json.forEach(function (object, index) {
                 var i = parseInt(index + 1);

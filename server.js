@@ -74,8 +74,6 @@ function getSummaryimage(accountid, pressure_dashboard){
 		  }
 
 
-		  try{
-
 			let simulationBCtype = "disp"
 			let url = `${accountid}/simulation/`;
 			// url += id === "625ffce0eaab772ba9b84d76" && pressure_dashboard ? 'p_summary.json' : 'disp_sim_summary.json';
@@ -90,17 +88,22 @@ function getSummaryimage(accountid, pressure_dashboard){
 			
 			console.log("summarydataa", summary)
 			if (!summary) {
-		
-				let urlP = `${accountid}/simulation/`;
-				urlP +=
-				pressure_dashboard === "true"
-					? "pressure_pressure_sim_summary.json"
-					: "pressure_strain_sim_summary.json";
-				console.log("url122", url);
-				summary = await getFileFromS3(urlP);
-				console.log("summarydataa press", summary)
-				simulationBCtype = "pressure"
-				url = urlP
+				try{
+					let urlP = `${accountid}/simulation/`;
+					urlP +=
+					pressure_dashboard === "true"
+						? "pressure_pressure_sim_summary.json"
+						: "pressure_strain_sim_summary.json";
+					console.log("url122", url);
+					summary = await getFileFromS3(urlP);
+					console.log("summarydataa press", summary)
+					simulationBCtype = "pressure"
+					url = urlP
+
+				} catch (err) {
+					console.log("No summary found", err)
+					reject(err);
+					}
 			}
 
 			let minimumPS = [[], [], [], [], [], [], []];
@@ -307,10 +310,7 @@ function getSummaryimage(accountid, pressure_dashboard){
 			
 			
 
-			} catch (err) {
-				console.log("Error", err)
-				reject(err);
-			}
+
 
 	 });
 }
@@ -341,27 +341,31 @@ function getTeamSummaryimage(team_id, teamSummary, pressure_dashboard){
 				console.log("URL", url)
 				let summary;
 
-				try{
+
 
 					summary = await getFileFromS3(url);
 
+				
 					if (!summary) {
 				
-						let urlP = `/team/${team_id}/`;
-						urlP +=
-						pressure_dashboard === "true"
-							? "pressure_pressure_sim_summary.json"
-							: "pressure_strain_sim_summary.json";
-						console.log("url122", url);
-						summary = await getFileFromS3(urlP);
-						simulationBCtype = "pressure"
-						url = urlP
+
+						try{
+							let urlP = `/team/${team_id}/`;
+							urlP +=
+							pressure_dashboard === "true"
+								? "pressure_pressure_sim_summary.json"
+								: "pressure_strain_sim_summary.json";
+							console.log("url122", url);
+							summary = await getFileFromS3(urlP);
+							simulationBCtype = "pressure"
+							url = urlP
+						}
+						catch(err)
+						{
+							reject("no summary file found", err);
+						}
 					}
-			}
-			catch(err)
-			{
-				reject("no summary file found", err);
-			}
+
 
 			
 
