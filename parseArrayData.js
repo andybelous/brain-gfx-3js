@@ -23,7 +23,7 @@ module.exports = function parseArrayData(summary_data, array_summary_object)  {
                     coordinate.x = element[0];
                     coordinate.y = element[1];
                     coordinate.z = element[2];
-                    if(summary_data[brain_region].value)
+                    if(summary_data.value)
                     {
                         coordinate.value = summary_data[brain_region].value;
                     }
