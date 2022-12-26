@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 const app = express();
 
-const port = 3000;
+const port = 3006;
 const writeImage = require("./writeImage.js");
 const writeRankedMpsChart = require("./writeRankedMpsChart.js");
 const writeMpsVsTimePlotImage = require("./writeMpsVsTimePlotImage.js")
@@ -1525,11 +1525,11 @@ app.post("/GetPlotImage", async function (req, res) {
 
 
 
-/* app.listen(process.env.PORT || port, function (err) {
+//  app.listen(process.env.PORT || port, function (err) {
 
-  console.log(`Server is listening at http://localhost:${port}`);
-});  */
-module.exports.handler = serverless(app);
+//   console.log(`Server is listening at http://localhost:${port}`);
+// });  
+ module.exports.handler = serverless(app);
 
 
 
