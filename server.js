@@ -12,7 +12,9 @@ const parseSummaryLocations = require("./parseSummaryLocations.js");
 const parseArrayData = require("./parseArrayData.js")
 const {uploadToS3PlayerImages, uploadToS3SingleImage, uploadToS3SingleLabeledImage, uploadToS3PlotImage, getFileFromS3, uploadToS3TeamImages, getTeamFileFromS3} = require("./UploadToS3.js");
 const getLabeledImage = require("./GetLabeledImage.js");
+console.log("start init")
 const SensorDetailsModel = require("./models/sensors/sensorDetailsData");
+console.log("start init processing")
 
 const generateBrainDetailsData = require("./generateBrainDetailsData.js");
 
@@ -1372,6 +1374,8 @@ app.post("/GetPlotImage", async function (req, res) {
 	
 	
 	const { account_id, event_id } = req.body;
+	console.log("plots images creation started")
+	console.log("req.body",req.body)
   
 	GetPlotImage(account_id, event_id).then((data) => {
 			  res.send({
@@ -1529,7 +1533,7 @@ app.post("/GetPlotImage", async function (req, res) {
 
 //   console.log(`Server is listening at http://localhost:${port}`);
 // });  
- module.exports.handler = serverless(app);
+  module.exports.handler = serverless(app);
 
 
 
