@@ -10,7 +10,7 @@ module.exports = function writeMpsVsTimePlotImage(
 ) {
   return new Promise((resolve, reject) => {
     const DATA = chartData;
-    
+
 
     const html = `<html>
     <head>
@@ -43,21 +43,27 @@ module.exports = function writeMpsVsTimePlotImage(
     </body>
     </html>`;
 
-    async function executeScript () {
+    async function executeScript() {
 
-  
-      const minimal_args = [
-        "--enable-webgl",
-        "--disable-web-security",
-        "--use-cmd-decoder=passthrough"
-      ];
-     const   browser = await chromium.puppeteer.launch({
-      args: minimal_args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
-      headless: chromium.headless,
-      ignoreHTTPSErrors: true,
-    });
+
+      // const minimal_args = [
+      //   "--enable-webgl",
+      //   "--disable-web-security",
+      //   "--use-cmd-decoder=passthrough"
+      // ];
+      var args = chromium.args;
+
+      args.push("--disable-web-security");
+      console.log("chromimu browser launch start for mps plot")
+      const browser = await chromium.puppeteer.launch({
+        //args: minimal_args,
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath,
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
+      });
+      console.log("chromimu browser launch end for mps plot")
 
       // console.log("test 1",browser);
 
@@ -89,84 +95,84 @@ module.exports = function writeMpsVsTimePlotImage(
 
             setUpChart(DATA);
             function setUpChart(chart_data) {
-                var ctx = document.getElementById("chart").getContext("2d");
-                var points = chart_data;
-              
-              
-                
-                  const data = {
-                    datasets: [
-                      {
-                        label: "MPS vs Time",
-                        data: points,
-                        pointRadius: 5,
-                        pointHoverRadius: 10,
-                        backgroundColor: "rgb(0 123 255 / 63%)",
-                      },
-                    ],
-                  };
-                  const options = {
-                    responsive: true,
-                    animation: {
-                        onComplete: function() {
-                          resolve(true);
-                        }
-                    },
-                    maintainAspectRatio: false,
-                    scales: {
-                      x: {
-                        type: "linear",
-                        position: "bottom",
-                        title: {
-                          display: true,
-                          font: {
-                            size: 14,
-                            weight: 600,
-                          },
-                          text: "Time (ms)",
-                        },
-                      },
-                      y: {
-                        type: "linear",
-                        title: {
-                          display: true,
-                          font: {
-                            size: 14,
-                            weight: 600,
-                          },
-                          color: "#808080c9",
-                          text: "95% MPS",
-                        },
-                      },
-                    },
-                    plugins: {
-                      datalabels: {
-                        color: "#007bff",
-                        display: false,
-                      },
-                      legend: {
-                        display: false,
-                      },
-                      tooltip: {
-                        enabled: false,
-                      },
-                    },
-                
-                  };
-                
-                
-              
-              
-                var myChart = new Chart(ctx, {
-                  type: "scatter",
-                  data: data,
-                  options: options,
-                });
-              }
-              
+              var ctx = document.getElementById("chart").getContext("2d");
+              var points = chart_data;
 
 
-            
+
+              const data = {
+                datasets: [
+                  {
+                    label: "MPS vs Time",
+                    data: points,
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    backgroundColor: "rgb(0 123 255 / 63%)",
+                  },
+                ],
+              };
+              const options = {
+                responsive: true,
+                animation: {
+                  onComplete: function () {
+                    resolve(true);
+                  }
+                },
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    type: "linear",
+                    position: "bottom",
+                    title: {
+                      display: true,
+                      font: {
+                        size: 14,
+                        weight: 600,
+                      },
+                      text: "Time (ms)",
+                    },
+                  },
+                  y: {
+                    type: "linear",
+                    title: {
+                      display: true,
+                      font: {
+                        size: 14,
+                        weight: 600,
+                      },
+                      color: "#808080c9",
+                      text: "95% MPS",
+                    },
+                  },
+                },
+                plugins: {
+                  datalabels: {
+                    color: "#007bff",
+                    display: false,
+                  },
+                  legend: {
+                    display: false,
+                  },
+                  tooltip: {
+                    enabled: false,
+                  },
+                },
+
+              };
+
+
+
+
+              var myChart = new Chart(ctx, {
+                type: "scatter",
+                data: data,
+                options: options,
+              });
+            }
+
+
+
+
           });
         },
         {
@@ -175,20 +181,20 @@ module.exports = function writeMpsVsTimePlotImage(
       );
 
       console.log("Successfully rendered plot image:", result);
-     /*  const screenshot = await page.screenshot({
-        path: account_id + "_" + BRAIN_STRAIN_ACTIVE + ".png",
-      });  */
+      /*  const screenshot = await page.screenshot({
+         path: account_id + "_" + BRAIN_STRAIN_ACTIVE + ".png",
+       });  */
       const base64 = await page.screenshot({
         fullPage: true,
         //omitBackground: true,
-       encoding: 'binary'
-          })
-           await browser.close();
-           resolve(base64);
+        encoding: 'binary'
+      })
+      await browser.close();
+      resolve(base64);
     };
 
     executeScript();
-  
+
   });
-  
+
 };

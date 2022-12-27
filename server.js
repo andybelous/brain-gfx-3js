@@ -23,7 +23,7 @@ var config = require('./config/configuration_keys.json')
 // Mongo connect
 var MONGODB_URL = config.MONGODB_URL;
 mongoose.connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true}).then(() => {
-    //don't show the log when it is test
+    //don't show the log when it is testt
     if (process.env.NODE_ENV !== "test") {
         console.log("Connected to %s", MONGODB_URL);
         console.log("App is running ... \n");
@@ -1423,7 +1423,8 @@ app.post("/GetPlotImage", async function (req, res) {
 		}
 
 		let data = JSON.stringify(mpsVsTimeChart_data);
-
+		console.log("rankedmpschart_data",rankedmpschart_data)
+		console.log("mpsVsTimeChart_data",mpsVsTimeChart_data)
 
 		writeRankedMpsChart(rankedmpschart_data)
 		.then((data) => {

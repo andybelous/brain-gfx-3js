@@ -45,19 +45,25 @@ module.exports = function writeRankedMpsChart(
 
     async function executeScript () {
 
-  
-      const minimal_args = [
-        "--enable-webgl",
-        "--disable-web-security",
-        "--use-cmd-decoder=passthrough"
-      ];
+      console.log("chromimu excution start")
+      // const minimal_args = [
+      //   "--enable-webgl",
+      //   "--disable-web-security",
+      //   "--use-cmd-decoder=passthrough"
+      // ];
+      var args = chromium.args;
+      
+      args.push("--disable-web-security");
+      console.log("chromimu browser launch start")
      const   browser = await chromium.puppeteer.launch({
-      args: minimal_args,
+      //args: minimal_args,
+      args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath,
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
+    console.log("chromimu browser launch end")
 
       // console.log("test 1",browser);
 
@@ -225,12 +231,15 @@ module.exports = function writeRankedMpsChart(
      /*  const screenshot = await page.screenshot({
         path: account_id + "_" + BRAIN_STRAIN_ACTIVE + ".png",
       });  */
+
+      console.log('after success message')
       const base64 = await page.screenshot({
         fullPage: true,
         //omitBackground: true,
        encoding: 'binary'
           })
            await browser.close();
+           console.log('end of page')
            resolve(base64);
     };
 

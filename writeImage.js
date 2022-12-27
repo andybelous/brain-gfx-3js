@@ -3,6 +3,8 @@ const fs = require('fs');
 const {
   performance
 } = require('perf_hooks');
+// import * as THREE from 'three';
+// import GLTFLoader from 'three-gltf-loader';
 
 
 module.exports = function writeImage(
@@ -260,13 +262,18 @@ module.exports = function writeImage(
     async function executeScript () {
 
   
-      const minimal_args = [
-        "--enable-webgl",
-        "--disable-web-security",
-        "--use-cmd-decoder=passthrough"
-      ];
+      // const minimal_args = [
+      //   "--enable-webgl",
+      //   "--disable-web-security",
+      //   "--use-cmd-decoder=passthrough"
+      // ];
+      var args = chromium.args;
+
+      args.push("--disable-web-security");
+      console.log("Brain images chromium launching")
      const   browser = await chromium.puppeteer.launch({
-      args: minimal_args,
+      //args: minimal_args,
+      args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath,
       headless: chromium.headless,
