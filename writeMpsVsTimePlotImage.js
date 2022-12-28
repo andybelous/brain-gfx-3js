@@ -57,7 +57,7 @@ module.exports = function writeMpsVsTimePlotImage(
       console.log("chromimu browser launch start for mps plot")
       const browser = await chromium.puppeteer.launch({
         //args: minimal_args,
-        args: chromium.args,
+        args: args,
         defaultViewport: chromium.defaultViewport,
         executablePath: await chromium.executablePath,
         headless: chromium.headless,
@@ -69,7 +69,7 @@ module.exports = function writeMpsVsTimePlotImage(
 
       //const browser = await puppeteer.launch();
       const page = await browser.newPage();
-      await page.setViewport({ width: 1920, height: 937 });
+      await page.setViewport({ width: 432, height: 280 });
       await page.setContent(html);
       // page.on('console', (log) => console[log._type](log._text));
 

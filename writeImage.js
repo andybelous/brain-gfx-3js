@@ -210,7 +210,7 @@ module.exports = function writeImage(
           </style>
       
       <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js" integrity="sha512-XI02ivhfmEfnk8CEEnJ92ZS6hOqWoWMKF6pxF/tC/DXBVxDXgs2Kmlc9CHA0Aw2dX03nrr8vF54Z6Mqlkuabkw==" crossorigin="anonymous"></script>
-      <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+      <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
       <script src="https://unpkg.com/three-spritetext"></script>
@@ -262,18 +262,24 @@ module.exports = function writeImage(
     async function executeScript () {
 
   
-      // const minimal_args = [
-      //   "--enable-webgl",
-      //   "--disable-web-security",
-      //   "--use-cmd-decoder=passthrough"
-      // ];
+      const minimal_args = [
+        "--enable-webgl",
+        "--disable-web-security",
+        "--use-cmd-decoder=passthrough"
+      ];
+      
       var args = chromium.args;
 
-      args.push("--disable-web-security");
-      console.log("Brain images chromium launching")
+
+      //args.push("--disable-web-security");
+      args = args.filter(arg => arg !== '--disable-setuid-sandbox')
+      args = args.filter(arg => arg !== '--ignore-gpu-blocklist')
+      args = args.filter(arg => arg !== '--use-gl=swiftshader')
+      args.push(...minimal_args)
+      //console.log("args", args);
      const   browser = await chromium.puppeteer.launch({
       //args: minimal_args,
-      args: chromium.args,
+      args: args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath,
       headless: chromium.headless,
