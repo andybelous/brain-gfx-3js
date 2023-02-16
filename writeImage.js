@@ -14,7 +14,8 @@ module.exports = function writeImage(
   ENABLE_COLOR,
   DISPLAY_CHART = true,
   ENABLE_LABELS = false,
-  PRESSURE_DASHBOARD = false
+  PRESSURE_DASHBOARD = false,
+  SUMMARY_TYPE = "summary.json"
 ) {
   return new Promise((resolve, reject) => {
     //const SAMPLE_DATA = fs.readFileSync('./data.json', {encoding:'utf8', flag:'r'});
@@ -316,7 +317,8 @@ module.exports = function writeImage(
           ENABLE_COLOR,
           DISPLAY_CHART,
           ENABLE_LABELS,
-          PRESSURE_DASHBOARD
+          PRESSURE_DASHBOARD,
+          SUMMARY_TYPE
         }) => {
           return await new Promise((resolve) => {
             var spheres_array = [];
@@ -721,6 +723,18 @@ module.exports = function writeImage(
               all_spheres_json = all_spheres_json.concat(stem_json);
               // all_spheres_json = all_spheres_json.concat(csf_json);
 
+
+
+              //Multiply sphere value by 100 if we use output.json
+              if(SUMMARY_TYPE === "output.json")
+              {
+                all_spheres_json = all_spheres_json.map(function (object) {
+                  object.value *= 100;
+                  return object;
+                });
+
+              }
+
               showAllSpheres();
               setUpChart();
 
@@ -1018,7 +1032,7 @@ module.exports = function writeImage(
               //region = "Motor Sensory Cortex"
               var dataLabel = new SpriteText(
                 `${strain_metric_name} = ${Math.round(
-                  sphere.value * 100
+                  sphere.value
                 )}%\nRegion = ${region}`,
                 16
               );
@@ -1077,6 +1091,8 @@ module.exports = function writeImage(
           ENABLE_COLOR,
           DISPLAY_CHART,
           ENABLE_LABELS,
+          PRESSURE_DASHBOARD,
+          SUMMARY_TYPE
         }
       );
 

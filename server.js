@@ -626,12 +626,16 @@ function GetLabeledImage1(account_id,event_id){
 			brainRegions["MPSxSR-28"] = MPSxSR_28;
 			brainRegions["MPSxSR-95"] = MPSxSR_95;
 			brainRegions["maximum-PSxSR"] = maximum_PSxSR;
+
 	  
 			const ENABLE_COLOR = true;
 			const DISPLAY_CHART = false;
 			const ENABLE_LABELS = true;
+			const PRESSURE_DASHBOARD = false;
+			const SUMMARY_TYPE = "output.json";
+      
 	  
-			writeImage(brainRegions, event_id, "principal-max-strain", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS)
+			writeImage(brainRegions, event_id, "principal-max-strain", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE)
 			  .then((data) => {
 				return uploadToS3SingleLabeledImage(
 				  account_id,
@@ -641,7 +645,7 @@ function GetLabeledImage1(account_id,event_id){
 				);
 			  })
 			  .then((data) => {
-				return writeImage(brainRegions, event_id, `CSDM-5`, ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS);
+				return writeImage(brainRegions, event_id, `CSDM-5`, ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 			  })
 			  .then((data) => {
 				return uploadToS3SingleLabeledImage(
@@ -652,7 +656,7 @@ function GetLabeledImage1(account_id,event_id){
 				);
 			  })
 			  .then((data) => {
-				return writeImage(brainRegions, event_id, "CSDM-10", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS);
+				return writeImage(brainRegions, event_id, "CSDM-10", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 			  })
 			  .then((data) => {
 				return uploadToS3SingleLabeledImage(
@@ -663,7 +667,7 @@ function GetLabeledImage1(account_id,event_id){
 				);
 			  })
 			  .then((data) => {
-				return writeImage(brainRegions, event_id, "CSDM-15", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS);
+				return writeImage(brainRegions, event_id, "CSDM-15", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 			  })
 			  .then((data) => {
 				return uploadToS3SingleLabeledImage(
@@ -674,7 +678,7 @@ function GetLabeledImage1(account_id,event_id){
 				);
 			  })
 			  .then((data) => {
-				return writeImage(brainRegions, event_id, "CSDM-30", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS);
+				return writeImage(brainRegions, event_id, "CSDM-30", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 			  })
 			  .then((data) => {
 				return uploadToS3SingleLabeledImage(
@@ -685,7 +689,7 @@ function GetLabeledImage1(account_id,event_id){
 				);
 			  })
 			  .then((data) => {
-				return writeImage(brainRegions, event_id, "MPS-95", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS);
+				return writeImage(brainRegions, event_id, "MPS-95", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 			  })
 			  .then((data) => {
 				return uploadToS3SingleLabeledImage(
@@ -696,7 +700,7 @@ function GetLabeledImage1(account_id,event_id){
 				);
 			  })
 			  .then((data) => {
-				return writeImage(brainRegions, event_id, "MPSR-120", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS);
+				return writeImage(brainRegions, event_id, "MPSR-120", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 			  })
 			  .then((data) => {
 				return uploadToS3SingleLabeledImage(
@@ -707,7 +711,7 @@ function GetLabeledImage1(account_id,event_id){
 				);
 			  })
 			  .then((data) => {
-				return writeImage(brainRegions, event_id, "MPSxSR-28", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS);
+				return writeImage(brainRegions, event_id, "MPSxSR-28", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 			  })
 			  .then((data) => {
 				return uploadToS3SingleLabeledImage(
@@ -718,7 +722,7 @@ function GetLabeledImage1(account_id,event_id){
 				);
 			  })
 			  .then((data) => {
-				return writeImage(brainRegions, event_id, "MPSxSR-95", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS);
+				return writeImage(brainRegions, event_id, "MPSxSR-95", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 			  })
 			  .then((data) => {
 				return uploadToS3SingleLabeledImage(
@@ -733,7 +737,7 @@ function GetLabeledImage1(account_id,event_id){
 				  brainRegions,
 				  event_id,
 				  "axonal-strain-max",
-				  ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS
+				  ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE
 				);
 			  })
 			  .then((data) => {
@@ -749,7 +753,7 @@ function GetLabeledImage1(account_id,event_id){
 				  brainRegions,
 				  event_id,
 				  "masXsr-15-max",
-				  ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS
+				  ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE
 				);
 			  })
 			  .then((data) => {
@@ -765,7 +769,7 @@ function GetLabeledImage1(account_id,event_id){
 				  brainRegions,
 				  event_id,
 				  "maximum-PSxSR",
-				  ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS
+				  ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE
 				);
 			  })
 			  .then((data) => {
@@ -781,7 +785,7 @@ function GetLabeledImage1(account_id,event_id){
 				  brainRegions,
 				  event_id,
 				  "principal-min-strain",
-				  ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS
+				  ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE
 				);
 			  })
 			  .then((data) => {
@@ -949,9 +953,12 @@ function GetSingleEventimage(account_id,event_id){
 
 			  const ENABLE_COLOR = true;
 			  const DISPLAY_CHART = false;
+			  const ENABLE_LABELS = false;
+			  const PRESSURE_DASHBOARD = false;
+			  const SUMMARY_TYPE = "output.json";
 
 
-			  writeImage(brainRegions, event_id, "principal-max-strain", ENABLE_COLOR, DISPLAY_CHART)
+			  writeImage(brainRegions, event_id, "principal-max-strain", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE)
 				.then((data) => {
 				  return uploadToS3SingleImage(
 					account_id,
@@ -961,7 +968,7 @@ function GetSingleEventimage(account_id,event_id){
 				  );
 				})
 				.then((data) => {
-				  return writeImage(brainRegions, event_id, `CSDM-5`, ENABLE_COLOR, DISPLAY_CHART);
+				  return writeImage(brainRegions, event_id, `CSDM-5`, ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 				})
 				.then((data) => {
 				  return uploadToS3SingleImage(
@@ -972,7 +979,7 @@ function GetSingleEventimage(account_id,event_id){
 				  );
 				})
 				.then((data) => {
-				  return writeImage(brainRegions, event_id, "CSDM-10", ENABLE_COLOR, DISPLAY_CHART);
+				  return writeImage(brainRegions, event_id, "CSDM-10", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 				})
 				.then((data) => {
 				  return uploadToS3SingleImage(
@@ -983,7 +990,7 @@ function GetSingleEventimage(account_id,event_id){
 				  );
 				})
 				.then((data) => {
-				  return writeImage(brainRegions, event_id, "CSDM-15", ENABLE_COLOR, DISPLAY_CHART);
+				  return writeImage(brainRegions, event_id, "CSDM-15", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 				})
 				.then((data) => {
 				  return uploadToS3SingleImage(
@@ -994,7 +1001,7 @@ function GetSingleEventimage(account_id,event_id){
 				  );
 				})
 				.then((data) => {
-				  return writeImage(brainRegions, event_id, "CSDM-30", ENABLE_COLOR, DISPLAY_CHART);
+				  return writeImage(brainRegions, event_id, "CSDM-30", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 				})
 				.then((data) => {
 				  return uploadToS3SingleImage(
@@ -1005,7 +1012,7 @@ function GetSingleEventimage(account_id,event_id){
 				  );
 				})
 				.then((data) => {
-				  return writeImage(brainRegions, event_id, "MPS-95", ENABLE_COLOR, DISPLAY_CHART);
+				  return writeImage(brainRegions, event_id, "MPS-95", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 				})
 				.then((data) => {
 				  return uploadToS3SingleImage(
@@ -1016,7 +1023,7 @@ function GetSingleEventimage(account_id,event_id){
 				  );
 				})
 				.then((data) => {
-				  return writeImage(brainRegions, event_id, "MPSR-120", ENABLE_COLOR, DISPLAY_CHART);
+				  return writeImage(brainRegions, event_id, "MPSR-120", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 				})
 				.then((data) => {
 				  return uploadToS3SingleImage(
@@ -1027,7 +1034,7 @@ function GetSingleEventimage(account_id,event_id){
 				  );
 				})
 				.then((data) => {
-				  return writeImage(brainRegions, event_id, "MPSxSR-28", ENABLE_COLOR, DISPLAY_CHART);
+				  return writeImage(brainRegions, event_id, "MPSxSR-28", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 				})
 				.then((data) => {
 				  return uploadToS3SingleImage(
@@ -1038,7 +1045,7 @@ function GetSingleEventimage(account_id,event_id){
 				  );
 				})
 				.then((data) => {
-				  return writeImage(brainRegions, event_id, "MPSxSR-95", ENABLE_COLOR, DISPLAY_CHART);
+				  return writeImage(brainRegions, event_id, "MPSxSR-95", ENABLE_COLOR, DISPLAY_CHART, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE);
 				})
 				.then((data) => {
 				  return uploadToS3SingleImage(
@@ -1053,7 +1060,7 @@ function GetSingleEventimage(account_id,event_id){
 					brainRegions,
 					event_id,
 					"axonal-strain-max",
-					ENABLE_COLOR
+					ENABLE_COLOR, undefined, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE
 				  );
 				})
 				.then((data) => {
@@ -1069,7 +1076,7 @@ function GetSingleEventimage(account_id,event_id){
 					brainRegions,
 					event_id,
 					"masXsr-15-max",
-					ENABLE_COLOR
+					ENABLE_COLOR, undefined, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE
 				  );
 				})
 				.then((data) => {
@@ -1085,7 +1092,7 @@ function GetSingleEventimage(account_id,event_id){
 					brainRegions,
 					event_id,
 					"maximum-PSxSR",
-					ENABLE_COLOR
+					ENABLE_COLOR, undefined, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE
 				  );
 				})
 				.then((data) => {
@@ -1101,7 +1108,7 @@ function GetSingleEventimage(account_id,event_id){
 					brainRegions,
 					event_id,
 					"principal-min-strain",
-					ENABLE_COLOR
+					ENABLE_COLOR, undefined, ENABLE_LABELS, PRESSURE_DASHBOARD, SUMMARY_TYPE
 				  );
 				})
 				.then((data) => {
