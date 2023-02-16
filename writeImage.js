@@ -214,7 +214,7 @@ module.exports = function writeImage(
       <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
-      <script src="https://unpkg.com/three-spritetext"></script>
+      <script src="https://cdn.jsdelivr.net/npm/three-spritetext@1.7.1/dist/three-spritetext.min.js"></script>
     </head>
     <body>
       <div id="blur-container">
