@@ -1018,7 +1018,6 @@ module.exports = function writeImage(
                 return;
               }
               var sphere = spheres_array[0];
-
               if (!(sphere.region && sphere.value)) {
                 return;
               }
