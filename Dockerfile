@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/nodejs:12
+FROM public.ecr.aws/lambda/nodejs:14
 # Define function directory
 ARG FUNCTION_DIR="./"
 ADD *.js *.png README.md package*.json ${FUNCTION_DIR}

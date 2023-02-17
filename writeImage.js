@@ -1,5 +1,10 @@
 const chromium = require("chrome-aws-lambda");
 const fs = require('fs');
+const {
+  performance
+} = require('perf_hooks');
+// import * as THREE from 'three';
+// import GLTFLoader from 'three-gltf-loader';
 
 
 module.exports = function writeImage(
@@ -8,7 +13,9 @@ module.exports = function writeImage(
   BRAIN_STRAIN_ACTIVE,
   ENABLE_COLOR,
   DISPLAY_CHART = true,
-  ENABLE_LABELS = false
+  ENABLE_LABELS = false,
+  PRESSURE_DASHBOARD = false,
+  SUMMARY_TYPE = "summary.json"
 ) {
   return new Promise((resolve, reject) => {
     //const SAMPLE_DATA = fs.readFileSync('./data.json', {encoding:'utf8', flag:'r'});
@@ -22,26 +29,27 @@ module.exports = function writeImage(
     function check_if_no_spheres (brainStrainActive, brainRegions)
     {
       var frontal_lobe_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].frontal || []
-        : [];
-      var cerebellum_lobe_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].cerebellum || []
-        : [];
-      var occipital_lobe_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].occipital || []
-        : [];
-      var pariental_lobe_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].parietal || []
-        : [];
-      var temporal_lobe_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].temporal || []
-        : [];
-      var middle_part_of_the_brain_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].msc || []
-        : [];
-      var stem_json = brainRegions[brainStrainActive]
-        ? brainRegions[brainStrainActive].stem || []
-        : [];
+      ? brainRegions[brainStrainActive].frontal || []
+      : [];
+    var cerebellum_lobe_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].cerebellum || []
+      : [];
+    var occipital_lobe_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].occipital || []
+      : [];
+    var pariental_lobe_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].parietal || []
+      : [];
+    var temporal_lobe_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].temporal || []
+      : [];
+    var middle_part_of_the_brain_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].msc || []
+      : [];
+    var stem_json = brainRegions[brainStrainActive]
+      ? brainRegions[brainStrainActive].stem || []
+      : [];
+
       //csf_json = this.props.brainRegions[brainStrainActive].csf || []
       var all_spheres_json = [];
       all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
@@ -203,10 +211,10 @@ module.exports = function writeImage(
           </style>
       
       <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js" integrity="sha512-XI02ivhfmEfnk8CEEnJ92ZS6hOqWoWMKF6pxF/tC/DXBVxDXgs2Kmlc9CHA0Aw2dX03nrr8vF54Z6Mqlkuabkw==" crossorigin="anonymous"></script>
-      <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+      <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
-      <script src="https://unpkg.com/three-spritetext"></script>
+      <script src="https://cdn.jsdelivr.net/npm/three-spritetext@1.7.1/dist/three-spritetext.min.js"></script>
     </head>
     <body>
       <div id="blur-container">
@@ -253,20 +261,26 @@ module.exports = function writeImage(
     </html>`;
 
     async function executeScript () {
+
+  
+      const minimal_args = [
+        "--enable-webgl",
+        "--disable-web-security",
+        "--use-cmd-decoder=passthrough"
+      ];
+      
       var args = chromium.args;
-      
-      args.push("--disable-web-security");
-      // args = args.filter(arg => arg !== '--headless');
-      // Lanch pupeteer with custom arguments
-      
-	  // console.log("test 1",args);
-/*	const browser = await chromium.puppeteer.launch({
-        headless: true,
-        ignoreDefaultArgs: true,
-        args,
-      }); */
+
+
+      //args.push("--disable-web-security");
+      args = args.filter(arg => arg !== '--disable-setuid-sandbox')
+      args = args.filter(arg => arg !== '--ignore-gpu-blocklist')
+      args = args.filter(arg => arg !== '--use-gl=swiftshader')
+      args.push(...minimal_args)
+      //console.log("args", args);
      const   browser = await chromium.puppeteer.launch({
-      args: chromium.args,
+      //args: minimal_args,
+      args: args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath,
       headless: chromium.headless,
@@ -303,6 +317,8 @@ module.exports = function writeImage(
           ENABLE_COLOR,
           DISPLAY_CHART,
           ENABLE_LABELS,
+          PRESSURE_DASHBOARD,
+          SUMMARY_TYPE
         }) => {
           return await new Promise((resolve) => {
             var spheres_array = [];
@@ -340,9 +356,15 @@ module.exports = function writeImage(
             const highlightEmissiveIntensity = 0.6;
 
 
-            const SMALL_BOUNDARY = 0.1;
-            const MEDIUM_BOUNDARY = 0.18;
-            const LARGE_BOUNDARY = 0.3;
+            // Strain dashboard boundaries
+            const SMALL_BOUNDARY = 10;
+            const MEDIUM_BOUNDARY = 18;
+            const LARGE_BOUNDARY = 30;
+
+            // Pressure dashboard boundaries kPa
+            const PRESSURE_SMALL_BOUNDARY = 20;
+            const PRESSURE_MEDIUM_BOUNDARY = 60;
+            const PRESSURE_LARGE_BOUNDARY = 100;
 
             const SMALL_COLOR = new THREE.Color(0x00b050);
             const MEDIUM_COLOR = new THREE.Color(0xed7d31);
@@ -608,7 +630,6 @@ module.exports = function writeImage(
 
                   sphereContainer = new THREE.Object3D();
                   root.add(sphereContainer);
-                  showUpdatedRegion();
 
                   root.position.x -= boxCenter.x;
                   root.position.y -= boxCenter.y;
@@ -645,15 +666,20 @@ module.exports = function writeImage(
                   brainModel.rotation.x = Math.PI / 2;
                   brainModel.rotation.y = Math.PI;
                   brainModel.rotation.z = Math.PI;
-
+ 
                   scene.add(brainModel);
+                  showUpdatedRegion();
                   if (
                     DISPLAY_LABELS &&
                     brainStrainActive == "principal-max-strain"
                   ) {
                     makeLabel();
                   }
+                  let startTime = performance.now()
                   renderer.render(scene, camera);
+                  let endTime = performance.now()
+                  let time = endTime-startTime;
+                  console.log(`frame rendering took ${time} milliseconds.`);
                   resolve(true);
                 },
                 (error) => console.log(error)
@@ -661,7 +687,7 @@ module.exports = function writeImage(
             }
 
             function showUpdatedRegion() {
-              console.log("brainRegions", brainStrainActive);
+              //console.log("brainRegions", brainStrainActive);
               frontal_lobe_json = brainRegions[brainStrainActive]
                 ? brainRegions[brainStrainActive].frontal || []
                 : [];
@@ -684,7 +710,7 @@ module.exports = function writeImage(
                 ? brainRegions[brainStrainActive].stem || []
                 : [];
               //csf_json = this.props.brainRegions[brainStrainActive].csf || []
-              console.log("frontal_lobe_json", pariental_lobe_json);
+              //console.log("frontal_lobe_json", pariental_lobe_json);
               all_spheres_json = [];
               all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
               all_spheres_json = all_spheres_json.concat(cerebellum_lobe_json);
@@ -697,18 +723,32 @@ module.exports = function writeImage(
               all_spheres_json = all_spheres_json.concat(stem_json);
               // all_spheres_json = all_spheres_json.concat(csf_json);
 
+
+
+              //Multiply sphere value by 100 if we use output.json
+              if(SUMMARY_TYPE === "output.json")
+              {
+                all_spheres_json = all_spheres_json.map(function (object) {
+                  object.value *= 100;
+                  return object;
+                });
+
+              }
+
               showAllSpheres();
               setUpChart();
+
             }
 
             function showAllSpheres() {
               // console.log('showing allshpere')
-              // console.log('showAllSpheres------------------------\n',all_spheres_json)
+              //console.log('showAllSpheres------------------------\n',all_spheres_json)
               if (all_spheres_json.length == 0) {
                 document.getElementById("blur-container").style.filter =
                   "blur(3px)";
                 document.getElementById("no-spheres-text").style.display =
                   "block";
+                  return;
               }
               all_spheres_json.forEach(function (object, index) {
                 var i = parseInt(index + 1);
@@ -740,19 +780,40 @@ module.exports = function writeImage(
                   sphere_material = sphereMat.clone();
                   //sphere_geometry = sphereGeo.clone();
 
-                  if (value <= SMALL_BOUNDARY) {
-                    sphere_material.color = SMALL_COLOR;
-                    sphere_geometry = SMALL_GEOMETRY;
-                  } else if (value <= MEDIUM_BOUNDARY) {
-                    sphere_material.color = MEDIUM_COLOR;
-                    sphere_geometry = MEDIUM_GEOMETRY;
-                  } else if (value <= LARGE_BOUNDARY) {
-                    sphere_material.color = LARGE_COLOR;
-                    sphere_geometry = LARGE_GEOMETRY;
-                  } else if (value > LARGE_BOUNDARY) {
-                    sphere_material.color = X_LARGE_COLOR;
-                    sphere_geometry = X_LARGE_GEOMETRY;
+                  if(!PRESSURE_DASHBOARD)
+                  {
+                    if (value <= SMALL_BOUNDARY) {
+                      sphere_material.color = SMALL_COLOR;
+                      sphere_geometry = SMALL_GEOMETRY;
+                    } else if (value <= MEDIUM_BOUNDARY) {
+                      sphere_material.color = MEDIUM_COLOR;
+                      sphere_geometry = MEDIUM_GEOMETRY;
+                    } else if (value <= LARGE_BOUNDARY) {
+                      sphere_material.color = LARGE_COLOR;
+                      sphere_geometry = LARGE_GEOMETRY;
+                    } else if (value > LARGE_BOUNDARY) {
+                      sphere_material.color = X_LARGE_COLOR;
+                      sphere_geometry = X_LARGE_GEOMETRY;
+                    }
                   }
+                  else if(PRESSURE_DASHBOARD)
+                  {
+                    if (value <= PRESSURE_SMALL_BOUNDARY) {
+                      sphere_material.color = SMALL_COLOR;
+                      sphere_geometry = SMALL_GEOMETRY;
+                    } else if (value <= PRESSURE_MEDIUM_BOUNDARY) {
+                      sphere_material.color = MEDIUM_COLOR;
+                      sphere_geometry = MEDIUM_GEOMETRY;
+                    } else if (value <= PRESSURE_LARGE_BOUNDARY) {
+                      sphere_material.color = LARGE_COLOR;
+                      sphere_geometry = LARGE_GEOMETRY;
+                    } else if (value > PRESSURE_LARGE_BOUNDARY) {
+                      sphere_material.color = X_LARGE_COLOR;
+                      sphere_geometry = X_LARGE_GEOMETRY;
+                    }
+                  }
+
+                  
                 }
                 const sphere = new THREE.Mesh(sphere_geometry, sphere_material);
                 const pointerPos = new THREE.Vector3(x, y, z);
@@ -957,7 +1018,6 @@ module.exports = function writeImage(
                 return;
               }
               var sphere = spheres_array[0];
-
               if (!(sphere.region && sphere.value)) {
                 return;
               }
@@ -971,7 +1031,7 @@ module.exports = function writeImage(
               //region = "Motor Sensory Cortex"
               var dataLabel = new SpriteText(
                 `${strain_metric_name} = ${Math.round(
-                  sphere.value * 100
+                  sphere.value
                 )}%\nRegion = ${region}`,
                 16
               );
@@ -1030,6 +1090,8 @@ module.exports = function writeImage(
           ENABLE_COLOR,
           DISPLAY_CHART,
           ENABLE_LABELS,
+          PRESSURE_DASHBOARD,
+          SUMMARY_TYPE
         }
       );
 

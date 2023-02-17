@@ -1,7 +1,7 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
 const config = require("./config/configuration_keys.json");
-const bucketName = config.bucketName;
+const bucketName = config.usersbucket;
 const accessKeyId = config.awsAccessKeyId;
 const secretAccessKey = config.awsSecretAccessKey;
 
@@ -9,133 +9,159 @@ const s3 = new AWS.S3({
   accessKeyId: accessKeyId,
   secretAccessKey: secretAccessKey,
 });
-
-function uploadToS3(account_id, file, data) {
-  return new Promise((resolve, reject) => {
-    const fileContent = data; //fs.readFileSync(`./${account_id}_${file}`);
-    const path = `${account_id}/simulation/SummaryBrainImages/${file}`;
-    const uploadParams = {
-      Bucket: bucketName,
-      Key: path,
-      Body: fileContent,
-      // ACL: 'public-read'
-    };
-    s3.upload(uploadParams, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        // fs.unlinkSync(`./${account_id}_${file}`);
-        resolve({ path: path });
-      }
+  
+function uploadToS3PlayerImages(account_id, file,data, pressure_dashboard = false) {
+    return new Promise((resolve, reject) => {
+      const fileContent =  data;//fs.readFileSync(`./${account_id}_${file}`);
+      const path = pressure_dashboard? `${account_id}/simulation/PressureSummaryBrainImages/${file}` : `${account_id}/simulation/SummaryBrainImages/${file}`;
+      const uploadParams = {
+        Bucket: bucketName,
+        Key: path,
+        Body: fileContent,
+        // ACL: 'public-read'
+      };
+      s3.upload(uploadParams, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+         // fs.unlinkSync(`./${account_id}_${file}`);
+          resolve({ path: path });
+        }
+      });
     });
-  });
-}
+  }
 
-function uploadToS3TeamImages(team_id, file, data) {
-  return new Promise((resolve, reject) => {
-    const fileContent = data; //fs.readFileSync(`./${account_id}_${file}`);
-    const path = `/team/${team_id}/simulation/SummaryBrainImages/${file}`;
-    const uploadParams = {
-      Bucket: bucketName,
-      Key: path,
-      Body: fileContent,
-      // ACL: 'public-read'
-    };
-    console.log("uploadParams ::: ", uploadParams);
-    s3.upload(uploadParams, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        // fs.unlinkSync(`./${account_id}_${file}`);
-        resolve({ path: path });
-      }
+
+  function uploadToS3TeamImages(team_id, file,data, pressure_dashboard = false) {
+    return new Promise((resolve, reject) => {
+      const fileContent = data;//fs.readFileSync(`./${account_id}_${file}`);
+      const path = pressure_dashboard? `/team/${team_id}/simulation/PressureSummaryBrainImages/${file}` : `/team/${team_id}/simulation/SummaryBrainImages/${file}`;
+      const uploadParams = {
+        Bucket: bucketName,
+        Key: path,
+        Body: fileContent,
+        // ACL: 'public-read'
+      };
+      s3.upload(uploadParams, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+         // fs.unlinkSync(`./${account_id}_${file}`);
+          resolve({ path: path });
+        }
+      });
     });
-  });
-}
-
-function uploadToS3SingleImage(account_id, event_id, file, data) {
-  return new Promise((resolve, reject) => {
-    const fileContent = data; //fs.readFileSync(`./${event_id}_${file}`);
-    const path = `${account_id}/simulation/${event_id}/BrainImages/${file}`;
-    const uploadParams = {
-      Bucket: bucketName,
-      Key: path,
-      Body: fileContent,
-      // ACL: 'public-read'
-    };
-    s3.upload(uploadParams, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
+  }
+  
+  
+  function uploadToS3SingleImage(account_id, event_id, file,data) {
+    return new Promise((resolve, reject) => {
+      const fileContent = data;//fs.readFileSync(`./${event_id}_${file}`);
+      const path = `${account_id}/simulation/${event_id}/BrainImages/${file}`;
+      const uploadParams = {
+        Bucket: bucketName,
+        Key: path,
+        Body: fileContent,
+        // ACL: 'public-read'
+      };
+      s3.upload(uploadParams, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
         //  fs.unlinkSync(`./${event_id}_${file}`);
-        resolve({ path: path });
-      }
+          resolve({ path: path });
+        }
+      });
     });
-  });
-}
+  }
 
-function getFileFromS3(file_path) {
-  return new Promise((resolve, reject) => {
-    const params = {
-      Bucket: bucketName,
-      Key: file_path,
-    };
-    s3.getObject(params, function (err, data) {
-      if (err) {
-        console.log("err permssion", err);
-        reject(err);
-      } else {
-        resolve(data);
-      }
+
+  function uploadToS3PlotImage(account_id, event_id, fileName,data) {
+    return new Promise((resolve, reject) => {
+      const fileContent = data;//fs.readFileSync(`./${event_id}_${file}`);
+      const path = `${account_id}/simulation/${event_id}/PlotImages/${fileName}`;
+      const uploadParams = {
+        Bucket: bucketName,
+        Key: path,
+        Body: fileContent,
+        // ACL: 'public-read'
+      };
+      s3.upload(uploadParams, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+        //  fs.unlinkSync(`./${event_id}_${file}`);
+          resolve({ path: path });
+        }
+      });
     });
-  });
-}
+  }
 
-function getTeamFileFromS3(url, bucket_name) {
-  console.log("url ---------------", url);
-  return new Promise((resolve, _reject) => {
-    const params = {
-      Bucket: bucket_name ? bucket_name : config.usersbucket,
-      Key: url,
-    };
 
-    s3.getObject(params, function (err, data) {
-      if (err) {
-        console.log("e", err);
-        // reject(err)
-        resolve(null);
-      } else {
-        resolve(data);
-      }
+  function getFileFromS3(file_path) {
+    return new Promise((resolve, reject) => {
+      const params = {
+        Bucket: bucketName,
+        Key: file_path,
+      };
+      s3.getObject(params, function (err, data) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
     });
-  });
-}
+  }
 
-function uploadToS3SingleLabeledImage(account_id, event_id, file, data) {
-  return new Promise((resolve, reject) => {
-    const fileContent = data; //fs.readFileSync(`./${event_id}_${file}`);
-    const path = `${account_id}/simulation/${event_id}/LabeledBrainImages/${file}`;
-    const uploadParams = {
-      Bucket: bucketName,
-      Key: path,
-      Body: fileContent,
-      // ACL: 'public-read'
-    };
-    s3.upload(uploadParams, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        // fs.unlinkSync(`./${event_id}_${file}`);
-        resolve({ path: path });
-      }
+  function getTeamFileFromS3 (url, bucket_name) {
+    console.log('url ---------------', url)
+    return new Promise((resolve, _reject) => {
+        const params = {
+            Bucket: bucket_name ? bucket_name : config.usersbucket,
+            Key: url
+        };
+        console.log('params ::: ', params)
+        s3.getObject(params, function (err, data) {
+            if (err) {
+                console.log('e',err)
+                // reject(err)
+                resolve(null);
+            }
+            else {
+                resolve(data);
+            }
+        });
+    })
+}
+  
+
+  function uploadToS3SingleLabeledImage(account_id, event_id, file,data) {
+    return new Promise((resolve, reject) => {
+      const fileContent = data;//fs.readFileSync(`./${event_id}_${file}`);
+      const path = `${account_id}/simulation/${event_id}/LabeledBrainImages/${file}`;
+      const uploadParams = {
+        Bucket: bucketName,
+        Key: path,
+        Body: fileContent,
+        // ACL: 'public-read'
+      };
+      s3.upload(uploadParams, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          // fs.unlinkSync(`./${event_id}_${file}`);
+          resolve({ path: path });
+        }
+      });
     });
-  });
-}
+  }
 
-exports.uploadToS3 = uploadToS3;
-exports.uploadToS3SingleImage = uploadToS3SingleImage;
-exports.uploadToS3SingleLabeledImage = uploadToS3SingleLabeledImage;
-exports.getFileFromS3 = getFileFromS3;
-exports.getTeamFileFromS3 = getTeamFileFromS3;
+  exports.uploadToS3PlayerImages = uploadToS3PlayerImages;
+  exports.uploadToS3SingleImage = uploadToS3SingleImage;
+  exports.uploadToS3SingleLabeledImage = uploadToS3SingleLabeledImage;
+  exports.uploadToS3PlotImage = uploadToS3PlotImage;
+  exports.getFileFromS3 = getFileFromS3;
+  exports.getTeamFileFromS3 = getTeamFileFromS3;
 
-exports.uploadToS3TeamImages = uploadToS3TeamImages;
+  exports.uploadToS3TeamImages = uploadToS3TeamImages;
